@@ -1,0 +1,30 @@
+plugins {
+    alias(libs.plugins.springBootPlugin)
+    alias(libs.plugins.springDepMgmtPlugin)
+    id 'java'
+}
+
+group = 'com.hooxi.config'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation libs.r2dbcPostgresLib
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'com.hooxi.data.model:hooxi-data-model'
+    implementation libs.springDocLib
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,17 @@
+
+spring:
+  application:
+    name: hooxi-grpc-client
+grpc:
+  client:
+    hooxi-grpc-client:
+      address: 'static://127.0.0.1:9090'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+logging:
+  level:
+    com:
+      hooxi: debug
+server:
+  port: 10000

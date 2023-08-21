@@ -1,0 +1,3 @@
+rootProject.name = 'hooxi-event-ingestion-client'
+
+includeBuild('../hooxi-data-model')

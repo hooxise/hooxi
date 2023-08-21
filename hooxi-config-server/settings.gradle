@@ -1,0 +1,11 @@
+rootProject.name = 'hooxi-config-service'
+
+includeBuild('../hooxi-data-model')
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
+}

@@ -1,0 +1,45 @@
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.cassandra.CassandraReactiveDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.cassandra.CassandraReactiveRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+  main:
+    lazy-initialization: true
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/hooxi?schema=hooxi_config
+    username: hooxi
+    password: hooxi#123
+  data:
+    r2dbc:
+      repositories:
+        enabled: true
+    #cassandra:
+    #  local-datacenter: datacenter1
+    #  keyspace-name: hooxi
+  #kafka:
+  #  producer:
+  #    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  #    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+  #  properties:
+  #    "[spring.json.trusted.packages]": "com.hooxi.event.ingestion.data.model"
+  #    "[spring.json.add.type.headers]": false
+  #  bootstrap-servers: localhost:29092
+hooxi_event_topic: hooxi_event_topic
+grpc:
+  port: 9090
+  shutdownGrace: 30
+logging:
+  level:
+    com:
+      hooxi: debug
+    org:
+      springframework:
+        kafka: debug
+server:
+  port: 11000
+
+
+hooxi:
+  persistence: postgres

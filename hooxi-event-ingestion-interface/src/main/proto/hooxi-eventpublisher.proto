@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package com.hooxi.collector.grpc;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.hooxi.collector.grpc.lib";
+option java_outer_classname = "HooxiCollectorGrpc";
+
+// The hooxi collector service definition.
+service HooxiIngestorService {
+  // Sends a event
+  rpc sendEvent(HooxiEventRequest) returns (HooxiEventReply) {}
+  rpc sendEventStream(stream HooxiEventRequest) returns (stream HooxiEventReply) {}
+}
+
+// The request message containing the user's name.
+message HooxiEventRequest {
+  message EventMetadata {
+    string tenant = 1;
+    string eventType = 2;
+    string eventSource = 3;
+    string eventURI = 4;
+    string timestamp = 5;
+    map<string,string> headers = 6;
+  }
+  string eventId = 1;
+  EventMetadata eventMetadata = 2;
+  string payload = 3;
+
+
+}
+
+// The response message containing the greetings
+message HooxiEventReply {
+  string eventId = 1;
+  string hooxiEventId = 2;
+}

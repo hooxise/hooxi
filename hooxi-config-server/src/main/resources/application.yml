@@ -1,0 +1,25 @@
+spring:
+  main:
+    lazy-initialization: true
+  webflux:
+    base-path: /config/api/v1
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/hooxi?schema=hooxi_config
+    username: hooxi
+    password: hooxi#123
+logging:
+  level:
+    com:
+      hooxi: debug
+    org:
+      springframework:
+        data: debug
+        web: debug
+      springdoc: debug
+    io:
+      lettuce: debug
+server:
+  port: 12000
+
+
+
