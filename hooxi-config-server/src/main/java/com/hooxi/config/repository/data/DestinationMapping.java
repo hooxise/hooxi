@@ -1,86 +1,98 @@
 package com.hooxi.config.repository.data;
 
 import com.hooxi.data.model.dest.Destination;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.springframework.data.relational.core.mapping.Column;
 
 public class DestinationMapping {
-    @Column("destmappingid")
-    private Long destinationMappingId;
-    private String tenantId;
-    @Column("domain_id")
-    private String domainId;
-    @Column("subdomain_id")
-    private String subdomainId;
-    @Column("event_type")
-    private String eventType;
-    @Column("destination_id")
-    private Long destinationId;
-    @Column("destination")
-    private Destination destination;
-    @Column("status")
-    private DestinationMappingStatus status;
+  @Column("destmappingid")
+  private Long destinationMappingId;
 
-    public Long getDestinationMappingId() {
-        return destinationMappingId;
-    }
+  private String tenantId;
 
-    public void setDestinationMappingId(Long destinationMappingId) {
-        this.destinationMappingId = destinationMappingId;
-    }
+  @Column("domain_id")
+  private String domainId;
 
-    public String getTenantId() {
-        return tenantId;
-    }
+  @Column("subdomain_id")
+  private String subdomainId;
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
+  @Column("event_type")
+  private String eventType;
 
-    public String getDomainId() {
-        return domainId;
-    }
+  @Column("destination_id")
+  private Long destinationId;
 
-    public void setDomainId(String domainId) {
-        this.domainId = domainId;
-    }
+  @Column("destination")
+  private Destination destination;
 
-    public String getSubdomainId() {
-        return subdomainId;
-    }
+  @Column("status")
+  private DestinationMappingStatus status;
 
-    public void setSubdomainId(String subdomainId) {
-        this.subdomainId = subdomainId;
-    }
+  public Long getDestinationMappingId() {
+    return destinationMappingId;
+  }
 
-    public String getEventType() {
-        return eventType;
-    }
+  public void setDestinationMappingId(Long destinationMappingId) {
+    this.destinationMappingId = destinationMappingId;
+  }
 
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
+  public String getTenantId() {
+    return tenantId;
+  }
 
-    public Long getDestinationId() {
-        return destinationId;
-    }
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
+  }
 
-    public void setDestinationId(Long destinationId) {
-        this.destinationId = destinationId;
-    }
+  public String getDomainId() {
+    return domainId;
+  }
 
-    public Destination getDestination() {
-        return destination;
-    }
+  public void setDomainId(String domainId) {
+    this.domainId = domainId;
+  }
 
-    public void setDestination(Destination destination) {
-        this.destination = destination;
-    }
+  public String getSubdomainId() {
+    return subdomainId;
+  }
 
-    public DestinationMappingStatus getStatus() {
-        return status;
-    }
+  public void setSubdomainId(String subdomainId) {
+    this.subdomainId = subdomainId;
+  }
 
-    public void setStatus(DestinationMappingStatus status) {
-        this.status = status;
-    }
+  public String getEventType() {
+    return eventType;
+  }
+
+  public void setEventType(String eventType) {
+    this.eventType = eventType;
+  }
+
+  public Long getDestinationId() {
+    return destinationId;
+  }
+
+  public void setDestinationId(Long destinationId) {
+    this.destinationId = destinationId;
+  }
+
+  public Destination getDestination() {
+    return destination;
+  }
+
+  public void setDestination(Destination destination) {
+    this.destination = destination;
+  }
+
+  public DestinationMappingStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(DestinationMappingStatus status) {
+    this.status = status;
+  }
+
+  public String toString() {
+    return ReflectionToStringBuilder.toString(this);
+  }
 }

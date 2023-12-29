@@ -19,8 +19,8 @@ plugins {
     id 'java-library'
     id 'com.google.protobuf' version "0.9.4"
     id 'idea'
+    id "com.diffplug.spotless" version "6.21.0"
 }
-
 
 
 repositories {
@@ -39,6 +39,14 @@ repositories {
 
 jar {
     enabled = true
+}
+
+spotless {
+    java {
+        removeUnusedImports()
+        googleJavaFormat()
+        targetExclude("build/generated/**")
+    }
 }
 
 dependencies {

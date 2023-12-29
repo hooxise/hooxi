@@ -1,0 +1,47 @@
+plugins {
+    alias(libs.plugins.springBootPlugin)
+    alias(libs.plugins.springDepMgmtPlugin)
+    id 'java'
+    id "com.diffplug.spotless" version "6.21.0"
+}
+
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.4"
+    }
+}
+
+
+spotless {
+    java {
+        removeUnusedImports()
+        googleJavaFormat()
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+group = 'com.hooxi.db.management'
+version = '0.0.1-SNAPSHOT'
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.postgresql:postgresql:42.6.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+bootBuildImage {
+    imageName = "docker.io/fusionswap/hooxi-database-management:${project.version}"
+}

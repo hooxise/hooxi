@@ -4,111 +4,135 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class HooxiEvent implements Serializable {
-    private String tenant;
-    private String internalEventId;
-    private String externalEventId;
-    private String eventType;
-    private String eventSource;
-    private String eventURI;
-    private String timestamp;
-    private String payload;
-    private Map<String, String> headers;
-    private EventStatus status;
-    private boolean createCloudEvent;
+  private String tenantId;
 
-    public String getInternalEventId() {
-        return internalEventId;
-    }
+  private String domainId;
+  private String subdomainId;
+  private String internalEventId;
+  private String externalEventId;
+  private String eventType;
+  private String eventSource;
+  private Long timestamp;
+  private String payload;
+  private Map<String, String> headers;
+  private EventStatus status;
 
-    public void setInternalEventId(String internalEventId) {
-        this.internalEventId = internalEventId;
-    }
+  public String getInternalEventId() {
+    return internalEventId;
+  }
 
-    public String getTenant() {
-        return tenant;
-    }
+  public void setInternalEventId(String internalEventId) {
+    this.internalEventId = internalEventId;
+  }
 
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
+  public String getTenantId() {
+    return tenantId;
+  }
 
-    public String getExternalEventId() {
-        return externalEventId;
-    }
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
+  }
 
-    public void setExternalEventId(String externalEventId) {
-        this.externalEventId = externalEventId;
-    }
+  public String getExternalEventId() {
+    return externalEventId;
+  }
 
-    public String getEventType() {
-        return eventType;
-    }
+  public void setExternalEventId(String externalEventId) {
+    this.externalEventId = externalEventId;
+  }
 
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
+  public String getEventType() {
+    return eventType;
+  }
 
-    public String getEventSource() {
-        return eventSource;
-    }
+  public void setEventType(String eventType) {
+    this.eventType = eventType;
+  }
 
-    public void setEventSource(String eventSource) {
-        this.eventSource = eventSource;
-    }
+  public String getEventSource() {
+    return eventSource;
+  }
 
-    public String getEventURI() {
-        return eventURI;
-    }
+  public void setEventSource(String eventSource) {
+    this.eventSource = eventSource;
+  }
 
-    public void setEventURI(String eventURI) {
-        this.eventURI = eventURI;
-    }
+  public Long getTimestamp() {
+    return timestamp;
+  }
 
-    public String getTimestamp() {
-        return timestamp;
-    }
+  public void setTimestamp(Long timestamp) {
+    this.timestamp = timestamp;
+  }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
+  public String getPayload() {
+    return payload;
+  }
 
-    public String getPayload() {
-        return payload;
-    }
+  public void setPayload(String payload) {
+    this.payload = payload;
+  }
 
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
+  public EventStatus getStatus() {
+    return status;
+  }
 
-    public EventStatus getStatus() {
-        return status;
-    }
+  public void setStatus(EventStatus status) {
+    this.status = status;
+  }
 
-    public void setStatus(EventStatus status) {
-        this.status = status;
-    }
+  public Map<String, String> getHeaders() {
+    return headers;
+  }
 
-    public boolean isCreateCloudEvent() {
-        return createCloudEvent;
-    }
+  public void setHeaders(Map<String, String> headers) {
+    this.headers = headers;
+  }
 
-    public void setCreateCloudEvent(boolean createCloudEvent) {
-        this.createCloudEvent = createCloudEvent;
-    }
+  public String getDomainId() {
+    return domainId;
+  }
 
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
+  public void setDomainId(String domainId) {
+    this.domainId = domainId;
+  }
 
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
-    }
+  public String getSubdomainId() {
+    return subdomainId;
+  }
 
-    @Override
-    public String toString() {
-        return "HooxiEvent{" + "tenant='" + tenant + '\'' + ", internalEventId='" + internalEventId + '\'' +
-                ", externalEventId='" + externalEventId + '\'' + ", eventType='" + eventType + '\'' +
-                ", eventSource='" + eventSource + '\'' + ", eventURI='" + eventURI + '\'' + ", timestamp='" +
-                timestamp + '\'' + ", payload='" + payload + '\'' + ", headers=" + headers + '\'' + '}';
-    }
+  public void setSubdomainId(String subdomainId) {
+    this.subdomainId = subdomainId;
+  }
+
+  @Override
+  public String toString() {
+    return "HooxiEvent{"
+        + "tenant='"
+        + tenantId
+        + '\''
+        + ", internalEventId='"
+        + internalEventId
+        + '\''
+        + ", externalEventId='"
+        + externalEventId
+        + '\''
+        + ", eventType='"
+        + eventType
+        + '\''
+        + ", eventSource='"
+        + eventSource
+        + '\''
+        + '\''
+        + ", timestamp='"
+        + timestamp
+        + '\''
+        + ", payload='"
+        + payload
+        + '\''
+        + ", headers="
+        + headers
+        + '\''
+        + '}';
+  }
 }

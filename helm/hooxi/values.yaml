@@ -1,0 +1,307 @@
+appVersion: 0.0.1
+hooxi-config-server:
+  replicaCount: 1
+  namespace: hooxi
+  image:
+    repository: docker.io/fusionswap/hooxi-config-server
+    pullPolicy: Always
+  initcontainer:
+    image:
+      repository: docker.io/fusionswap/hooxi-database-management
+      pullPolicy: Always
+      version: 0.0.1-SNAPSHOT
+  applicationName: hooxi-config-server
+  serviceAccount:
+    create: false
+    annotations: {}
+    name: ""
+  annotations: {}
+  labels: {}
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    enabled: true
+    type: ClusterIP
+    httpPort: 12000
+    httpTargetPort: "12000"
+    httpNodePort: null
+    managementPort: "12001"
+    managementTargetPort: "12001"
+    managementNodePort: null
+    namespace: hooxi
+    serviceName: hooxi-config-server-service
+    labels:
+      prometheus.io/target: spring-boot-actuator-instance
+
+  extraEnv: []
+  #  - name: "ENV_VAR"
+  #    valueFrom:
+  #      secretKeyRef:
+  #        name: "some-secret-name"
+  #        key: "some-key"
+  #        optional: true
+
+  envFrom: []
+  #  - configMapRef:
+  #      name: ""
+  #      optional: true
+  #  - secretRef:
+  #      name: ""
+  #      optional: true
+  config:
+    annotations: {}
+    labels: {}
+    log4j: |-
+      Configuration:
+        Appenders:
+          Console:
+            name: Console
+            target: SYSTEM_OUT
+            JsonLayout:
+              compact: true
+              eventEol: true
+              includeTimeMillis: true
+      
+        Loggers:
+          Root:
+            level: INFO
+            AppenderRef:
+              - ref: Console
+    application: |-
+      spring:
+        r2dbc:
+          url: r2dbc:postgresql://hooxi-postgresql.hooxi:5432/hooxi?schema=hooxi
+          username: hooxi
+        data:
+          redis:
+            database: 0
+            host: hooxi-redis-master.hooxi
+    application_init_container: |-
+      spring:
+        datasource:
+          url: jdbc:postgresql://hooxi-postgresql.hooxi:5432/hooxi
+        flyway:
+          user: hooxi
+
+  # Entrypoint array. Not executed within a shell. The docker image's ENTRYPOINT is used if this is not provided.
+  # The default entrypoint for jib generated docker image is `java -cp @/app/jib-classpath-file @/app/jib-main-class-file`
+  command: []
+  # Arguments to the entrypoint.
+  args: []
+  jvmOptions:
+    - -XX:+UseContainerSupport
+    - -XX:MaxRAMPercentage=80.0
+    - -Djava.net.preferIPv4Stack=true
+    - -Djava.awt.headless=true
+    - -Dspring.config.additional-location=/etc/config/app/application.yaml
+  postgresql:
+    secretPrefix: hooxi
+  redis:
+    secretPrefix: hooxi
+
+hooxi-event-ingestion-server:
+  replicaCount: 1
+  namespace: hooxi
+  image:
+    repository: docker.io/fusionswap/hooxi-event-ingestion-server
+    pullPolicy: Always
+  initcontainer:
+    image:
+      repository: docker.io/fusionswap/hooxi-database-management
+      pullPolicy: Always
+      version: 0.0.1-SNAPSHOT
+  applicationName: hooxi-event-ingestion-server
+  serviceAccount:
+    create: false
+    annotations: {}
+    name: ""
+  annotations: {}
+  labels: {}
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    enabled: true
+    type: ClusterIP
+    httpPort: 11000
+    httpTargetPort: "11000"
+    httpNodePort: null
+    managementPort: "11001"
+    managementTargetPort: "11001"
+    managementNodePort: null
+    namespace: hooxi
+    serviceName: hooxi-event-ingestion-service
+    labels:
+      prometheus.io/target: spring-boot-actuator-instance
+
+  extraEnv: []
+  #  - name: "ENV_VAR"
+  #    valueFrom:
+  #      secretKeyRef:
+  #        name: "some-secret-name"
+  #        key: "some-key"
+  #        optional: true
+
+  envFrom: []
+  #  - configMapRef:
+  #      name: ""
+  #      optional: true
+  #  - secretRef:
+  #      name: ""
+  #      optional: true
+  config:
+    annotations: {}
+    labels: {}
+    log4j: |-
+      Configuration:
+        Appenders:
+          Console:
+            name: Console
+            target: SYSTEM_OUT
+            JsonLayout:
+              compact: true
+              eventEol: true
+              includeTimeMillis: true
+      
+        Loggers:
+          Root:
+            level: INFO
+            AppenderRef:
+              - ref: Console
+    application: |-
+      spring:
+        r2dbc:
+          url: r2dbc:postgresql://hooxi-postgresql.hooxi:5432/hooxi?schema=hooxi
+          username: hooxi
+        data:
+          redis:
+            database: 0
+            host: hooxi-redis-master.hooxi
+      hooxi:
+        persistence: postgres
+        config:
+          server:
+            url: http://hooxi-config-server-service.hooxi:12000/
+    application_init_container: |-
+      spring:
+        datasource:
+          url: jdbc:postgresql://hooxi-postgresql.hooxi:5432/hooxi
+        flyway:
+          user: hooxi
+
+  # Entrypoint array. Not executed within a shell. The docker image's ENTRYPOINT is used if this is not provided.
+  # The default entrypoint for jib generated docker image is `java -cp @/app/jib-classpath-file @/app/jib-main-class-file`
+  command: []
+  # Arguments to the entrypoint.
+  args: []
+  jvmOptions:
+    - -XX:+UseContainerSupport
+    - -XX:MaxRAMPercentage=80.0
+    - -Djava.net.preferIPv4Stack=true
+    - -Djava.awt.headless=true
+    - -Dspring.config.additional-location=/etc/config/app/application.yaml
+  postgresql:
+    secretPrefix: hooxi
+  redis:
+    secretPrefix: hooxi
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+postgresql:
+  serviceAccount:
+    create: true
+  serviceAccountName: hooxi-postgresql
+
+
+
+global:
+  postgresql:
+    auth:
+      username: hooxi
+      password: hooxi#123
+      postgresPassword: hooxi#123
+      database: hooxi
+
+ingress:
+  enabled: false
+  annotations: {}
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: http-management
+  failureThreshold: 3
+  periodSeconds: 15
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: http-management
+  failureThreshold: 10
+  periodSeconds: 15
+
+startupProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: http-management
+  failureThreshold: 10
+  initialDelaySeconds: 15
+  periodSeconds: 15
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+extraVolumeMounts: {}
+
+extraVolumes: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: {}
+
+affinity: {}
+
+metricsConfig:
+  # If `true`, a ServiceMonitor resource for the prometheus-operator is created
+  enabled: false
+  # Annotations for the ServiceMonitor
+  annotations: {}
+  # Additional labels for the ServiceMonitor
+  labels: {}
+  # Interval at which Prometheus scrapes metrics
+  interval: 15s
+  # Timeout for scraping
+  scrapeTimeout: 15s
+  # The path at which metrics are served
+  path: /actuator/prometheus
+  # The Service port at which metrics are served
+  port: http-management

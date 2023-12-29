@@ -11,29 +11,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class HooxiGrpcClientService {
 
-    private static final Logger logger = LoggerFactory.getLogger(HooxiGrpcClientService.class);
+  private static final Logger logger = LoggerFactory.getLogger(HooxiGrpcClientService.class);
 
-    @GrpcClient("hooxi-grpc-client")
-    private HooxiIngestorServiceGrpc.HooxiIngestorServiceBlockingStub hooxiEventCollectorStub;
+  @GrpcClient("hooxi-grpc-client")
+  private HooxiIngestorServiceGrpc.HooxiIngestorServiceBlockingStub hooxiEventCollectorStub;
 
-    public HooxiEventReply sendHooxiEvent(HooxiEventData hooxiEvent) {
+  public HooxiEventReply sendHooxiEvent(HooxiEventData hooxiEvent) {
 
-        HooxiEventRequest req = HooxiEventRequest.newBuilder()
-                .setEventId(hooxiEvent.getEventId())
-                .setEventMetadata(HooxiEventRequest.EventMetadata.newBuilder()
-                        .setEventSource(hooxiEvent.getEventSource())
-                        .setEventType(hooxiEvent.getEventType())
-                        .setEventURI(hooxiEvent.getEventURI())
-                        .setTenant(hooxiEvent.getTenant())
-                        .setTimestamp(hooxiEvent.getTimestamp())
-                        .build())
-                .setPayload(hooxiEvent.getPayload())
-                .build();
+    HooxiEventRequest req =
+        HooxiEventRequest.newBuilder()
+            .setEventId(hooxiEvent.getEventId())
+            .setEventMetadata(
+                HooxiEventRequest.EventMetadata.newBuilder()
+                    .setEventSource(hooxiEvent.getEventSource())
+                    .setEventType(hooxiEvent.getEventType())
+                    .setEventURI(hooxiEvent.getEventURI())
+                    .setTenant(hooxiEvent.getTenant())
+                    .setTimestamp(hooxiEvent.getTimestamp())
+                    .build())
+            .setPayload(hooxiEvent.getPayload())
+            .build();
 
-        HooxiEventReply reply = hooxiEventCollectorStub.sendEvent(req);
-        logger.debug("reply received " + reply);
-        return reply;
-    }
-
-
+    HooxiEventReply reply = hooxiEventCollectorStub.sendEvent(req);
+    logger.debug("reply received " + reply);
+    return reply;
+  }
 }

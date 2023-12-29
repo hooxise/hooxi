@@ -1,0 +1,17 @@
+apiVersion: v2
+name: hooxi
+description: deploy hooxi on k8s
+type: application
+version: 0.0.1
+appVersion: 0.0.1-SNAPSHOT
+keywords:
+  - hooxi
+dependencies:
+  - name: redis
+    version: 18.2.1
+    repository: https://charts.bitnami.com/bitnami
+  - name: postgresql
+    version: 13.2.1
+    repository: https://charts.bitnami.com/bitnami
+  - name: hooxi-config-server
+    version: 0.0.1-SNAPSHOT

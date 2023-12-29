@@ -1,4 +1,4 @@
-rootProject.name = 'hooxi-config-service'
+rootProject.name = 'hooxi-config-server'
 
 includeBuild('../hooxi-data-model')
 

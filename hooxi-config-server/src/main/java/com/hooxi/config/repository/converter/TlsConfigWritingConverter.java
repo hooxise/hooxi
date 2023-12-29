@@ -12,21 +12,21 @@ import org.springframework.data.convert.WritingConverter;
 
 @WritingConverter
 public class TlsConfigWritingConverter implements Converter<TLSConfig, Json> {
-    private static final Logger logger = LoggerFactory.getLogger(TlsConfigWritingConverter.class);
-    private ObjectMapper mapper;
+  private static final Logger logger = LoggerFactory.getLogger(TlsConfigWritingConverter.class);
+  private ObjectMapper mapper;
 
-    @Autowired
-    public TlsConfigWritingConverter(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+  @Autowired
+  public TlsConfigWritingConverter(ObjectMapper mapper) {
+    this.mapper = mapper;
+  }
 
-    @Override
-    public Json convert(TLSConfig value) {
-        try {
-            return Json.of(mapper.writeValueAsString(value));
-        } catch (JsonProcessingException e) {
-            logger.error("Error converting TLSConfig {} to json", value, e);
-            return Json.of("");
-        }
+  @Override
+  public Json convert(TLSConfig value) {
+    try {
+      return Json.of(mapper.writeValueAsString(value));
+    } catch (JsonProcessingException e) {
+      logger.error("Error converting TLSConfig {} to json", value, e);
+      return Json.of("");
     }
+  }
 }

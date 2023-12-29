@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.applicationName }}-configmap
+  namespace: {{ .Values.namespace }}
+data:
+  {{- with .Values.config.log4j }}
+  logging.yaml: >-
+    {{- tpl . $ | nindent 4 }}
+    {{- end }}
+  {{- with .Values.config.application }}
+  application.yaml: >-
+    {{- tpl . $ | nindent 4 }}
+  {{- end }}
+  {{- with .Values.config.application_init_container }}
+  application_initcontainer.yaml: >-
+    {{- tpl . $ | nindent 4 }}
+  {{- end }}
+
+

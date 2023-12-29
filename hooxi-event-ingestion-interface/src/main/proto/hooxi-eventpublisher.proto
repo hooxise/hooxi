@@ -22,8 +22,8 @@ message HooxiEventRequest {
     string eventType = 2;
     string eventSource = 3;
     string eventURI = 4;
-    string timestamp = 5;
-    map<string,string> headers = 6;
+    int64 timestamp = 5;
+    map<string, string> headers = 6;
   }
   string eventId = 1;
   EventMetadata eventMetadata = 2;
