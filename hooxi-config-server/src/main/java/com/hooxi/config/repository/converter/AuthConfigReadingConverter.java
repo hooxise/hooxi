@@ -11,21 +11,21 @@ import org.springframework.core.convert.converter.Converter;
 
 public class AuthConfigReadingConverter implements Converter<Json, AuthenticationConfig> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthConfigReadingConverter.class);
-    private ObjectMapper mapper;
+  private static final Logger logger = LoggerFactory.getLogger(AuthConfigReadingConverter.class);
+  private ObjectMapper mapper;
 
-    @Autowired
-    public AuthConfigReadingConverter(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+  @Autowired
+  public AuthConfigReadingConverter(ObjectMapper mapper) {
+    this.mapper = mapper;
+  }
 
-    @Override
-    public AuthenticationConfig convert(Json source) {
-        try {
-            return mapper.readValue(source.asString(), AuthenticationConfig.class);
-        } catch (JsonProcessingException e) {
-            logger.error("Error converting json {} to AuthenticationConfig", source.asString(), e);
-            return null;
-        }
+  @Override
+  public AuthenticationConfig convert(Json source) {
+    try {
+      return mapper.readValue(source.asString(), AuthenticationConfig.class);
+    } catch (JsonProcessingException e) {
+      logger.error("Error converting json {} to AuthenticationConfig", source.asString(), e);
+      return null;
     }
+  }
 }

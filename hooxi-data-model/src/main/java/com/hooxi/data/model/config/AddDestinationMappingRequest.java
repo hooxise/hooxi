@@ -3,53 +3,57 @@ package com.hooxi.data.model.config;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class AddDestinationMappingRequest {
-    private Long destinationId;
-    @Schema(nullable = true)
-    private String domainId;
-    @Schema(nullable = true)
-    private String subdomainId;
-    @Schema(nullable = true)
-    private String eventType;
-    @Schema(allowableValues = {"ACTIVE","INACTIVE"})
-    private String status;
+  private Long destinationId;
 
-    public Long getDestinationId() {
-        return destinationId;
-    }
+  @Schema(nullable = true)
+  private String domainId;
 
-    public void setDestinationId(Long destinationId) {
-        this.destinationId = destinationId;
-    }
+  @Schema(nullable = true)
+  private String subdomainId;
 
-    public String getDomainId() {
-        return domainId;
-    }
+  @Schema(nullable = true)
+  private String eventType;
 
-    public void setDomainId(String domainId) {
-        this.domainId = domainId;
-    }
+  @Schema(allowableValues = {"ACTIVE", "INACTIVE"})
+  private String status;
 
-    public String getSubdomainId() {
-        return subdomainId;
-    }
+  public Long getDestinationId() {
+    return destinationId;
+  }
 
-    public void setSubdomainId(String subdomainId) {
-        this.subdomainId = subdomainId;
-    }
+  public void setDestinationId(Long destinationId) {
+    this.destinationId = destinationId;
+  }
 
-    public String getEventType() {
-        return eventType;
-    }
+  public String getDomainId() {
+    return domainId;
+  }
 
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
+  public void setDomainId(String domainId) {
+    this.domainId = domainId;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public String getSubdomainId() {
+    return subdomainId;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setSubdomainId(String subdomainId) {
+    this.subdomainId = subdomainId;
+  }
+
+  public String getEventType() {
+    return eventType;
+  }
+
+  public void setEventType(String eventType) {
+    this.eventType = eventType;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
 }

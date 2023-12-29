@@ -1,5 +1,7 @@
 package com.hooxi.config.router;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
+
 import com.hooxi.config.router.handler.ConfigServiceHandler;
 import com.hooxi.data.model.config.FindDestinationsResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,105 +20,58 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
-
 @Configuration(proxyBeanMethods = false)
 public class ConfigServiceRouter {
-    @Bean
-    @RouterOperations({@RouterOperation(method = RequestMethod.GET,
-                                        path = "/destmappings/tenant/{tenantId}/domain/{domainId}/subdomain/{subdomainId}/eventtype/{eventType}",
-                                        beanClass = ConfigServiceHandler.class,
-                                        beanMethod = "findDestinationMappings",
-                                        operation = @Operation(description = "Find Destination Mappings",
-                                                               operationId = "findDestinationMappings",
-                                                               tags = "DestinationMappings",
-                                                               responses = @ApiResponse(responseCode = "200",
-                                                                                        content = @Content(
-                                                                                            schema = @Schema(
-                                                                                                implementation = FindDestinationsResponse.class))),
-                                                               parameters = {
-                                                                   @Parameter(in = ParameterIn.PATH,
-                                                                              name = "eventType"),
-                                                                   @Parameter(in = ParameterIn.PATH,
-                                                                              name = "subdomainId"),
-                                                                   @Parameter(in = ParameterIn.PATH,
-                                                                              name = "domainId"),
-                                                                   @Parameter(in = ParameterIn.PATH,
-                                                                              name = "tenantId")})),
-        @RouterOperation(method = RequestMethod.GET,
-                         path = "/destmappings/tenant/{tenantId}/domain/{domainId}/subdomain/{subdomainId}",
-                         beanClass = ConfigServiceHandler.class,
-                         beanMethod = "findDestinationMappings",
-                         operation = @Operation(description = "Find Destination Mappings",
-                                                operationId = "findDestinationMappings",
-                                                tags = "DestinationMappings",
-                                                responses = @ApiResponse(responseCode = "200",
-                                                                         content = @Content(
-                                                                             schema = @Schema(
-                                                                                 implementation = FindDestinationsResponse.class))),
-                                                parameters = {
-                                                    @Parameter(in = ParameterIn.PATH,
-                                                               name = "subdomainId"),
-                                                    @Parameter(in = ParameterIn.PATH,
-                                                               name = "domainId"),
-                                                    @Parameter(in = ParameterIn.PATH,
-                                                               name = "tenantId")})),
-        @RouterOperation(method = RequestMethod.GET,
-                         path = "/destmappings/tenant/{tenantId}/domain/{domainId}",
-                         beanClass = ConfigServiceHandler.class,
-                         beanMethod = "findDestinationMappings",
-                         operation = @Operation(description = "Find Destination Mappings",
-                                                operationId = "findDestinationMappings",
-                                                tags = "DestinationMappings",
-                                                responses = @ApiResponse(responseCode = "200",
-                                                                         content = @Content(
-                                                                             schema = @Schema(
-                                                                                 implementation = FindDestinationsResponse.class))),
-                                                parameters = {
-                                                    @Parameter(in = ParameterIn.PATH,
-                                                               name = "domainId"),
-                                                    @Parameter(in = ParameterIn.PATH,
-                                                               name = "tenantId")})),
-        @RouterOperation(method = RequestMethod.GET,
-                         path = "/destmappings/tenant/{tenantId}",
-                         beanClass = ConfigServiceHandler.class,
-                         beanMethod = "findDestinationMappings",
-                         operation = @Operation(description = "Find Destination Mappings",
-                                                operationId = "findDestinationMappings",
-                                                tags = "DestinationMappings",
-                                                responses = @ApiResponse(responseCode = "200",
-                                                                         content = @Content(
-                                                                             schema = @Schema(
-                                                                                 implementation = FindDestinationsResponse.class))),
-                                                parameters = {
-                                                    @Parameter(in = ParameterIn.PATH,
-                                                               name = "tenantId")})),
-        @RouterOperation(method = RequestMethod.POST,
-                         path = "/destmappings/tenant/{tenantId}",
-                         beanClass = ConfigServiceHandler.class,
-                         beanMethod = "addDestinationMapping"),
-        @RouterOperation(method = RequestMethod.DELETE,
-                         path = "/destmappings/tenant/{tenantId}/mapping/{destMappingId}",
-                         beanClass = ConfigServiceHandler.class,
-                         beanMethod = "deleteDestinationMapping")
-    })
-    public RouterFunction<ServerResponse> destinationMappingRoute(ConfigServiceHandler configServiceHandler) {
+  @Bean
+  @RouterOperations({
+    @RouterOperation(
+        method = RequestMethod.GET,
+        path = "/tenants/{tenantId}/destmappings",
+        beanClass = ConfigServiceHandler.class,
+        beanMethod = "findDestinationMappings",
+        operation =
+            @Operation(
+                description = "Find Destination Mappings",
+                operationId = "findDestinationMappings",
+                tags = "DestinationMappings",
+                responses =
+                    @ApiResponse(
+                        responseCode = "200",
+                        content =
+                            @Content(
+                                schema = @Schema(implementation = FindDestinationsResponse.class))),
+                parameters = {
+                  @Parameter(in = ParameterIn.PATH, name = "tenantId"),
+                  @Parameter(in = ParameterIn.QUERY, name = "domainId"),
+                  @Parameter(in = ParameterIn.QUERY, name = "subdomainId"),
+                  @Parameter(in = ParameterIn.QUERY, name = "eventType")
+                })),
+    @RouterOperation(
+        method = RequestMethod.POST,
+        path = "/tenants/{tenantId}/destmappings",
+        beanClass = ConfigServiceHandler.class,
+        beanMethod = "addDestinationMapping"),
+    @RouterOperation(
+        method = RequestMethod.DELETE,
+        path = "/tenants/{tenantId}/destmappings/{destMappingId}",
+        beanClass = ConfigServiceHandler.class,
+        beanMethod = "deleteDestinationMapping")
+  })
+  public RouterFunction<ServerResponse> destinationMappingRoute(
+      ConfigServiceHandler configServiceHandler) {
 
-        return RouterFunctions.route()
-            .GET("/destmappings/tenant/{tenantId}/domain/{domainId}/subdomain/{subdomainId}/eventtype/{eventType}",
-                accept(MediaType.APPLICATION_JSON), configServiceHandler::findDestinationMappings)
-            .GET("/destmappings/tenant/{tenantId}/domain/{domainId}/subdomain/{subdomainId}",
-                accept(MediaType.APPLICATION_JSON), configServiceHandler::findDestinationMappings)
-            .GET("/destmappings/tenant/{tenantId}/domain/{domainId}", accept(MediaType.APPLICATION_JSON),
-                configServiceHandler::findDestinationMappings)
-            .GET("/destmappings/tenant/{tenantId}", accept(MediaType.APPLICATION_JSON),
-                configServiceHandler::findDestinationMappings)
-            .POST("/destmappings/tenant/{tenantId}", accept(MediaType.APPLICATION_JSON),
-                configServiceHandler::addDestinationMapping)
-            .DELETE("/destmappings/tenant/{tenantId}/mapping/{destMappingId}",
-                configServiceHandler::deleteDestinationMapping)
-            .build();
-
-    }
-
+    return RouterFunctions.route()
+        .GET(
+            "/tenants/{tenantId}/destmappings",
+            accept(MediaType.APPLICATION_JSON),
+            configServiceHandler::findDestinationMappings)
+        .POST(
+            "/tenants/{tenantId}/destmappings",
+            accept(MediaType.APPLICATION_JSON),
+            configServiceHandler::addDestinationMapping)
+        .DELETE(
+            "/tenants/{tenantId}/destmappings/{destMappingId}",
+            configServiceHandler::deleteDestinationMapping)
+        .build();
+  }
 }

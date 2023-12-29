@@ -11,35 +11,45 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface DestinationMappingRepository extends ReactiveCrudRepository<DestinationMappingEntity, Long> {
-    @Query("SELECT hdc.id as destmappingid, hdc.tenant_id, hdc.domain_id, hdc.subdomain_id, hdc.event_type, hd.destination, hdc.destination_id, hdc.status " +
-        "FROM hooxi_destination hd, hooxi_destination_config hdc where hd.id = hdc.destination_id " +
-        "and hdc.tenant_id = :tenantId and (hdc.domain_id = :domainId or hdc.domain_id is null) " +
-        "and (hdc.subdomain_id = :subdomainId or hdc.subdomain_id is null) " +
-        "and (hdc.event_type = :eventType or hdc.event_type is null)")
-    Flux<DestinationMapping> findDestinationConfigFor(String tenantId, String domainId, String subdomainId,
-                                                      String eventType);
+public interface DestinationMappingRepository
+    extends ReactiveCrudRepository<DestinationMappingEntity, Long> {
+  @Query(
+      "SELECT hdc.id as destmappingid, hdc.tenant_id, hdc.domain_id, hdc.subdomain_id, hdc.event_type, hd.destination, hdc.destination_id, hdc.status "
+          + "FROM hooxi_destination hd, hooxi_destination_config hdc where hd.id = hdc.destination_id "
+          + "and hdc.tenant_id = :tenantId and (hdc.domain_id = :domainId or hdc.domain_id is null) "
+          + "and (hdc.subdomain_id = :subdomainId or hdc.subdomain_id is null) "
+          + "and (hdc.event_type = :eventType or hdc.event_type is null)")
+  Flux<DestinationMapping> findDestinationConfigFor(
+      String tenantId, String domainId, String subdomainId, String eventType);
 
-    @Query("SELECT hdc.id as destmappingid, hdc.tenant_id, hdc.domain_id, hdc.subdomain_id, hdc.event_type, hd.destination, hdc.destination_id, hdc.status " +
-        "FROM hooxi_destination hd, hooxi_destination_config hdc where hd.id = hdc.destination_id " +
-        "and hdc.tenant_id = :tenantId and (hdc.domain_id = :domainId or hdc.domain_id is null) " +
-        "and (hdc.subdomain_id = :subdomainId or hdc.subdomain_id is null) " + "and hdc.event_type is null")
-    Flux<DestinationMapping> findDestinationConfigFor(String tenantId, String domainId, String subdomainId);
+  @Query(
+      "SELECT hdc.id as destmappingid, hdc.tenant_id, hdc.domain_id, hdc.subdomain_id, hdc.event_type, hd.destination, hdc.destination_id, hdc.status "
+          + "FROM hooxi_destination hd, hooxi_destination_config hdc where hd.id = hdc.destination_id "
+          + "and hdc.tenant_id = :tenantId and (hdc.domain_id = :domainId or hdc.domain_id is null) "
+          + "and (hdc.subdomain_id = :subdomainId or hdc.subdomain_id is null) "
+          + "and hdc.event_type is null")
+  Flux<DestinationMapping> findDestinationConfigFor(
+      String tenantId, String domainId, String subdomainId);
 
-    @Query("SELECT hdc.id as destmappingid, hdc.tenant_id, hdc.domain_id, hdc.subdomain_id, hdc.event_type, hd.destination, hdc.destination_id, hdc.status " +
-        "FROM hooxi_destination hd, hooxi_destination_config hdc where hd.id = hdc.destination_id " +
-        "and hdc.tenant_id = :tenantId and (hdc.domain_id = :domainId or hdc.domain_id is null) " +
-        "and hdc.subdomain_id is null " + "and hdc.event_type is null")
-    Flux<DestinationMapping> findDestinationConfigFor(String tenantId, String domainId);
+  @Query(
+      "SELECT hdc.id as destmappingid, hdc.tenant_id, hdc.domain_id, hdc.subdomain_id, hdc.event_type, hd.destination, hdc.destination_id, hdc.status "
+          + "FROM hooxi_destination hd, hooxi_destination_config hdc where hd.id = hdc.destination_id "
+          + "and hdc.tenant_id = :tenantId and (hdc.domain_id = :domainId or hdc.domain_id is null) "
+          + "and hdc.subdomain_id is null "
+          + "and hdc.event_type is null")
+  Flux<DestinationMapping> findDestinationConfigFor(String tenantId, String domainId);
 
-    @Query("SELECT hdc.id as destmappingid, hdc.tenant_id, hdc.domain_id, hdc.subdomain_id, hdc.event_type, hd.destination, hdc.destination_id, hdc.status " +
-        "FROM hooxi_destination hd, hooxi_destination_config hdc where hd.id = hdc.destination_id " +
-        "and hdc.tenant_id = :tenantId and hdc.domain_id is null " + "and hdc.subdomain_id is null " +
-        "and hdc.event_type is null")
-    Flux<DestinationMapping> findDestinationConfigFor(String tenantId);
+  @Query(
+      "SELECT hdc.id as destmappingid, hdc.tenant_id, hdc.domain_id, hdc.subdomain_id, hdc.event_type, hd.destination, hdc.destination_id, hdc.status "
+          + "FROM hooxi_destination hd, hooxi_destination_config hdc where hd.id = hdc.destination_id "
+          + "and hdc.tenant_id = :tenantId and hdc.domain_id is null "
+          + "and hdc.subdomain_id is null "
+          + "and hdc.event_type is null")
+  Flux<DestinationMapping> findDestinationConfigFor(String tenantId);
 
-    @Modifying
-    @Query("UPDATE hooxi_destination_config set status = :updatedStatus where id = :destinationMappingId ")
-    Mono<Integer> updateDestinationMappingStatus(Long destinationMappingId, DestinationMappingStatus updateStatus);
-
+  @Modifying
+  @Query(
+      "UPDATE hooxi_destination_config set status = :updatedStatus where id = :destinationMappingId ")
+  Mono<Integer> updateDestinationMappingStatus(
+      Long destinationMappingId, DestinationMappingStatus updateStatus);
 }

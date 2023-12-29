@@ -1,0 +1,15 @@
+apiVersion: v2
+name: hooxi-event-ingestion-server
+description: deploy hooxi-event-ingestion-server on k8s
+type: application
+version: 0.0.1
+appVersion: 0.0.1-SNAPSHOT
+keywords:
+  - hooxi-event-ingestion-server
+dependencies:
+  - name: redis
+    version: 18.2.1
+    repository: https://charts.bitnami.com/bitnami
+  - name: postgresql
+    version: 13.2.1
+    repository: https://charts.bitnami.com/bitnami

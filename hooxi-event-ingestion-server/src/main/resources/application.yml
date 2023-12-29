@@ -1,14 +1,14 @@
 spring:
+  application:
+    name: hooxi-event-ingestion
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration
       - org.springframework.boot.autoconfigure.data.cassandra.CassandraReactiveDataAutoConfiguration
       - org.springframework.boot.autoconfigure.data.cassandra.CassandraReactiveRepositoriesAutoConfiguration
       - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
-  main:
-    lazy-initialization: true
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/hooxi?schema=hooxi_config
+    url: r2dbc:postgresql://localhost:5432/hooxi?schema=hooxi
     username: hooxi
     password: hooxi#123
   data:
@@ -39,7 +39,15 @@ logging:
         kafka: debug
 server:
   port: 11000
-
+management:
+  endpoint:
+    health:
+      enabled: true
+  server:
+    port: 11001
 
 hooxi:
   persistence: postgres
+  config:
+    server:
+      url: http://localhost:12000/

@@ -1,10 +1,12 @@
 spring:
+  application:
+    name: hooxi-config-server
   main:
-    lazy-initialization: true
+    allow-bean-definition-overriding: true
   webflux:
     base-path: /config/api/v1
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/hooxi?schema=hooxi_config
+    url: r2dbc:postgresql://localhost:5432/hooxi?schema=hooxi
     username: hooxi
     password: hooxi#123
 logging:
@@ -12,14 +14,17 @@ logging:
     com:
       hooxi: debug
     org:
-      springframework:
-        data: debug
-        web: debug
-      springdoc: debug
+      springframework: debug
+      springdoc: info
     io:
-      lettuce: debug
+      lettuce: info
 server:
   port: 12000
-
+management:
+  endpoint:
+    health:
+      enabled: true
+  server:
+    port: 12001
 
 

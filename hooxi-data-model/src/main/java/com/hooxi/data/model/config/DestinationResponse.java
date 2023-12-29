@@ -5,32 +5,33 @@ import com.hooxi.data.model.dest.WebhookDestination;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class DestinationResponse {
-    private Long destinationId;
-    private String tenantId;
-    @Schema(oneOf = {WebhookDestination.class})
-    private Destination destination;
+  private Long destinationId;
+  private String tenantId;
 
-    public Long getDestinationId() {
-        return destinationId;
-    }
+  @Schema(oneOf = {WebhookDestination.class})
+  private Destination destination;
 
-    public void setDestinationId(Long destinationId) {
-        this.destinationId = destinationId;
-    }
+  public Long getDestinationId() {
+    return destinationId;
+  }
 
-    public Destination getDestination() {
-        return destination;
-    }
+  public void setDestinationId(Long destinationId) {
+    this.destinationId = destinationId;
+  }
 
-    public void setDestination(Destination destination) {
-        this.destination = destination;
-    }
+  public Destination getDestination() {
+    return destination;
+  }
 
-    public String getTenantId() {
-        return tenantId;
-    }
+  public void setDestination(Destination destination) {
+    this.destination = destination;
+  }
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
+  public String getTenantId() {
+    return tenantId;
+  }
+
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
+  }
 }

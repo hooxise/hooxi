@@ -19,39 +19,36 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 @SpringBootTest
 class HooxiConfigServiceApplicationTests {
 
-    @Autowired
-    DestinationRedisRepository destinationRedisRepository;
+  @Autowired DestinationRedisRepository destinationRedisRepository;
 
-    @Autowired
-    @Qualifier("destinationMappingRoute")
-    RouterFunction<ServerResponse> routerFunction;
+  @Autowired
+  @Qualifier("destinationMappingRoute")
+  RouterFunction<ServerResponse> routerFunction;
 
-    @Autowired
-    ConfigServiceHandler configServiceHandler;
+  @Autowired ConfigServiceHandler configServiceHandler;
 
-    @Autowired
-    ReactiveRedisOperations<String, DestinationCacheEntity> template;
+  @Autowired ReactiveRedisOperations<String, DestinationCacheEntity> template;
 
-    @Autowired
-    RedisConnectionFactory redisConnectionFactory;
+  @Autowired RedisConnectionFactory redisConnectionFactory;
 
-    @Autowired
-    RedisTemplate<String, Destination> redisTemplate;
+  @Autowired RedisTemplate<String, Destination> redisTemplate;
 
-    @BeforeEach
-    public void setup() {
+  @BeforeEach
+  public void setup() {}
 
-    }
-
-    @Test
-    void testGetConfig() throws Exception {
-        WebTestClient wte = WebTestClient.bindToRouterFunction(routerFunction).build();
-        wte.get()
-            .uri("/config/tenant/tenant1/domain/domain1/subdomain/subdomain1/eventtype/eventType1")
-            .exchange()
-            .expectBody()
-            .consumeWith(response -> System.out.println(String.format("%d %s", response.getStatus().value(),
-                new String(response.getResponseBodyContent()))));
-    }
-
+  @Test
+  void testGetConfig() throws Exception {
+    WebTestClient wte = WebTestClient.bindToRouterFunction(routerFunction).build();
+    wte.get()
+        .uri("/config/tenant/tenant1/domain/domain1/subdomain/subdomain1/eventtype/eventType1")
+        .exchange()
+        .expectBody()
+        .consumeWith(
+            response ->
+                System.out.println(
+                    String.format(
+                        "%d %s",
+                        response.getStatus().value(),
+                        new String(response.getResponseBodyContent()))));
+  }
 }

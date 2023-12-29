@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: hooxi-database-management
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hooxi
+  flyway:
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    user: hooxi
+    password: hooxi#123
+    schemas: hooxi
+logging:
+  level:
+    com:
+      hooxi: debug
+    org:
+      springframework: debug
+
+
+

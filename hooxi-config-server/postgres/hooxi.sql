@@ -3,13 +3,13 @@ database hooxi
     with owner hooxi;
 */
 
-create schema hooxi_config;
+create schema hooxi;
 
 alter
-schema hooxi_config owner to hooxi;
+    schema hooxi owner to hooxi;
 
 set
-search_path to hooxi_config;
+    search_path to hooxi;
 
 create table hooxi_destination_config
 (
@@ -34,7 +34,7 @@ create table hooxi_destination
             primary key,
     destination jsonb,
     auth_config jsonb,
-    tls_config jsonb,
+    tls_config  jsonb,
     tenant_id   varchar
 );
 

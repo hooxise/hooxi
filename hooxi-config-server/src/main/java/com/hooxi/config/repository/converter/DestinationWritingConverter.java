@@ -12,21 +12,21 @@ import org.springframework.data.convert.WritingConverter;
 
 @WritingConverter
 public class DestinationWritingConverter implements Converter<Destination, Json> {
-    private static final Logger logger = LoggerFactory.getLogger(DestinationWritingConverter.class);
-    private ObjectMapper mapper;
+  private static final Logger logger = LoggerFactory.getLogger(DestinationWritingConverter.class);
+  private ObjectMapper mapper;
 
-    @Autowired
-    public DestinationWritingConverter(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+  @Autowired
+  public DestinationWritingConverter(ObjectMapper mapper) {
+    this.mapper = mapper;
+  }
 
-    @Override
-    public Json convert(Destination value) {
-        try {
-            return Json.of(mapper.writeValueAsString(value));
-        } catch (JsonProcessingException e) {
-            logger.error("Error converting destination {} to json", value, e);
-            return Json.of("");
-        }
+  @Override
+  public Json convert(Destination value) {
+    try {
+      return Json.of(mapper.writeValueAsString(value));
+    } catch (JsonProcessingException e) {
+      logger.error("Error converting destination {} to json", value, e);
+      return Json.of("");
     }
+  }
 }

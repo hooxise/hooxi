@@ -1,0 +1,19 @@
+plugins {
+    id "com.diffplug.spotless" version "6.21.0"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.diffplug.spotless'
+    spotless {
+        java {
+            removeUnusedImports()
+            googleJavaFormat()
+        }
+    }
+}

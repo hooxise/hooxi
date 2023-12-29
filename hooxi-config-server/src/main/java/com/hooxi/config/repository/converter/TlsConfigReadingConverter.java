@@ -11,21 +11,21 @@ import org.springframework.core.convert.converter.Converter;
 
 public class TlsConfigReadingConverter implements Converter<Json, TLSConfig> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TlsConfigReadingConverter.class);
-    private ObjectMapper mapper;
+  private static final Logger logger = LoggerFactory.getLogger(TlsConfigReadingConverter.class);
+  private ObjectMapper mapper;
 
-    @Autowired
-    public TlsConfigReadingConverter(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+  @Autowired
+  public TlsConfigReadingConverter(ObjectMapper mapper) {
+    this.mapper = mapper;
+  }
 
-    @Override
-    public TLSConfig convert(Json source) {
-        try {
-            return mapper.readValue(source.asString(), TLSConfig.class);
-        } catch (JsonProcessingException e) {
-            logger.error("Error converting json {} to TLSConfig", source.asString(), e);
-            return null;
-        }
+  @Override
+  public TLSConfig convert(Json source) {
+    try {
+      return mapper.readValue(source.asString(), TLSConfig.class);
+    } catch (JsonProcessingException e) {
+      logger.error("Error converting json {} to TLSConfig", source.asString(), e);
+      return null;
     }
+  }
 }

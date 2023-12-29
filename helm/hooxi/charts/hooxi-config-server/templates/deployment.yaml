@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.applicationName }}-deployment
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.applicationName }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        app.kubernetes.io/name: {{ .Values.applicationName }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      restartPolicy: Always
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.httpTargetPort }}
+              protocol: TCP
+            - name: http-management
+              containerPort: {{ .Values.service.managementTargetPort }}
+              protocol: TCP
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http-management
+            failureThreshold: 3
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http-management
+            failureThreshold: 10
+            periodSeconds: 15
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: http-management
+            failureThreshold: 10
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          env:
+            - name: LOG4J_CONFIGURATION_FILE
+              value: /etc/config/app/logging.yaml
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ join " " .Values.jvmOptions }}
+            - name: SPRING_DATA_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.redis.secretPrefix }}-redis
+                  key: redis-password
+            - name: SPRING_R2DBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.secretPrefix }}-postgresql
+                  key: password
+          volumeMounts:
+            - name: logging
+              mountPath: /etc/config/app/logging.yaml
+              readOnly: true
+              subPath: logging.yaml
+            - name: application
+              mountPath: /etc/config/app/application.yaml
+              readOnly: true
+              subPath: application.yaml
+      initContainers:
+        - name: {{ .Chart.Name }}-init
+          image: "{{ .Values.initcontainer.image.repository }}:{{ .Values.initcontainer.image.version }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: LOG4J_CONFIGURATION_FILE
+              value: /etc/config/app/logging.yaml
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ join " " .Values.jvmOptions }}
+            - name: SPRING_FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.secretPrefix }}-postgresql
+                  key: password
+          volumeMounts:
+            - name: logging
+              mountPath: /etc/config/app/logging.yaml
+              readOnly: true
+              subPath: logging.yaml
+            - name: application-initcontainer
+              mountPath: /etc/config/app/application.yaml
+              readOnly: true
+              subPath: application.yaml
+      volumes:
+        - name: logging
+          configMap:
+            name: {{ .Values.applicationName }}-configmap
+            items:
+              - key: "logging.yaml"
+                path: logging.yaml
+        - name: application
+          configMap:
+            name: {{ .Values.applicationName }}-configmap
+            items:
+              - key: "application.yaml"
+                path: application.yaml
+        - name: application-initcontainer
+          configMap:
+            name: {{ .Values.applicationName }}-configmap
+            items:
+              - key: "application_initcontainer.yaml"
+                path: application.yaml

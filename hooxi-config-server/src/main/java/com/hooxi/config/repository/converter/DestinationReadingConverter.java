@@ -12,21 +12,21 @@ import org.springframework.data.convert.ReadingConverter;
 
 @ReadingConverter
 public class DestinationReadingConverter implements Converter<Json, Destination> {
-    private static final Logger logger = LoggerFactory.getLogger(DestinationReadingConverter.class);
-    private ObjectMapper mapper;
+  private static final Logger logger = LoggerFactory.getLogger(DestinationReadingConverter.class);
+  private ObjectMapper mapper;
 
-    @Autowired
-    public DestinationReadingConverter(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+  @Autowired
+  public DestinationReadingConverter(ObjectMapper mapper) {
+    this.mapper = mapper;
+  }
 
-    @Override
-    public Destination convert(Json source) {
-        try {
-            return mapper.readValue(source.asString(), Destination.class);
-        } catch (JsonProcessingException e) {
-            logger.error("Error converting json {} to Destination", source.asString(), e);
-            return null;
-        }
+  @Override
+  public Destination convert(Json source) {
+    try {
+      return mapper.readValue(source.asString(), Destination.class);
+    } catch (JsonProcessingException e) {
+      logger.error("Error converting json {} to Destination", source.asString(), e);
+      return null;
     }
+  }
 }

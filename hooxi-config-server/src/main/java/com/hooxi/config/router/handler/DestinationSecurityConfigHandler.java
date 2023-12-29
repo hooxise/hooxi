@@ -12,26 +12,32 @@ import reactor.core.publisher.Mono;
 @Component
 public class DestinationSecurityConfigHandler {
 
-    private final DestinationSecurityConfigService destinationSecurityConfigService;
+  private final DestinationSecurityConfigService destinationSecurityConfigService;
 
-    @Autowired
-    public DestinationSecurityConfigHandler(DestinationSecurityConfigService destinationSecurityConfigService) {
-        this.destinationSecurityConfigService = destinationSecurityConfigService;
-    }
+  @Autowired
+  public DestinationSecurityConfigHandler(
+      DestinationSecurityConfigService destinationSecurityConfigService) {
+    this.destinationSecurityConfigService = destinationSecurityConfigService;
+  }
 
-    public Mono<ServerResponse> findDestinationSeurityConfig(ServerRequest serverRequest) {
-        Long destinationId = Long.valueOf(serverRequest.pathVariable("destinationId"));
-        String tenantId = serverRequest.pathVariable("tenantId");
-        return destinationSecurityConfigService.findDestinationSecurityConfig(tenantId, destinationId)
-            .flatMap(dsc -> ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(DestinationSecurityConfigResponseBuilder.aDestinationSecurityConfigResponse()
-                    .withDestinationId(destinationId)
-                    .withDestinationSecurityConfig(dsc)
-                    .build()));
-    }
+  public Mono<ServerResponse> findDestinationSeurityConfig(ServerRequest serverRequest) {
+    Long destinationId = Long.valueOf(serverRequest.pathVariable("destinationId"));
+    String tenantId = serverRequest.pathVariable("tenantId");
+    return destinationSecurityConfigService
+        .findDestinationSecurityConfig(tenantId, destinationId)
+        .flatMap(
+            dsc ->
+                ServerResponse.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(
+                        DestinationSecurityConfigResponseBuilder
+                            .aDestinationSecurityConfigResponse()
+                            .withDestinationId(destinationId)
+                            .withDestinationSecurityConfig(dsc)
+                            .build()));
+  }
 
-    public Mono<ServerResponse> addDestinationSeurityConfig(ServerRequest serverRequest) {
-        return Mono.empty();
-    }
+  public Mono<ServerResponse> addDestinationSeurityConfig(ServerRequest serverRequest) {
+    return Mono.empty();
+  }
 }

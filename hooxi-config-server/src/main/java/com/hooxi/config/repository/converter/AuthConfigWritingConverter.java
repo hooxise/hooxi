@@ -12,21 +12,21 @@ import org.springframework.data.convert.WritingConverter;
 
 @WritingConverter
 public class AuthConfigWritingConverter implements Converter<AuthenticationConfig, Json> {
-    private static final Logger logger = LoggerFactory.getLogger(AuthConfigWritingConverter.class);
-    private ObjectMapper mapper;
+  private static final Logger logger = LoggerFactory.getLogger(AuthConfigWritingConverter.class);
+  private ObjectMapper mapper;
 
-    @Autowired
-    public AuthConfigWritingConverter(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+  @Autowired
+  public AuthConfigWritingConverter(ObjectMapper mapper) {
+    this.mapper = mapper;
+  }
 
-    @Override
-    public Json convert(AuthenticationConfig value) {
-        try {
-            return Json.of(mapper.writeValueAsString(value));
-        } catch (JsonProcessingException e) {
-            logger.error("Error converting AuthenticationConfig {} to json", value, e);
-            return Json.of("");
-        }
+  @Override
+  public Json convert(AuthenticationConfig value) {
+    try {
+      return Json.of(mapper.writeValueAsString(value));
+    } catch (JsonProcessingException e) {
+      logger.error("Error converting AuthenticationConfig {} to json", value, e);
+      return Json.of("");
     }
+  }
 }

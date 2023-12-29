@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface DestinationRepository extends ReactiveCrudRepository<DestinationEntity, Long> {
-    Mono<DestinationEntity> findByIdAndTenantId(Long id, String tenantId);
+  Mono<DestinationEntity> findByIdAndTenantId(Long id, String tenantId);
 
-    Flux<DestinationEntity> findByTenantId(String tenantId);
+  Flux<DestinationEntity> findByTenantId(String tenantId);
 }

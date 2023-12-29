@@ -1,32 +1,15 @@
 package com.hooxi.event.ingestion.data.model.request;
 
+import java.util.List;
+
 public class EventIngestionRequest {
+  private List<EventIngestionData> events;
 
-    private String eventId;
-    private String payload;
-    private EventMetadata eventMetadata;
+  public List<EventIngestionData> getEvents() {
+    return events;
+  }
 
-    public String getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-
-    public EventMetadata getEventMetadata() {
-        return eventMetadata;
-    }
-
-    public void setEventMetadata(EventMetadata eventMetadata) {
-        this.eventMetadata = eventMetadata;
-    }
+  public void setEvents(List<EventIngestionData> events) {
+    this.events = events;
+  }
 }
