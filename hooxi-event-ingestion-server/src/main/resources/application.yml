@@ -1,12 +1,8 @@
 spring:
   application:
     name: hooxi-event-ingestion
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.cassandra.CassandraReactiveDataAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.cassandra.CassandraReactiveRepositoriesAutoConfiguration
-      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+  webflux:
+    base-path: /ingest/api/v1
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/hooxi?schema=hooxi
     username: hooxi
@@ -32,11 +28,7 @@ grpc:
   shutdownGrace: 30
 logging:
   level:
-    com:
-      hooxi: debug
-    org:
-      springframework:
-        kafka: debug
+    com.hooxi: DEBUG
 server:
   port: 11000
 management:

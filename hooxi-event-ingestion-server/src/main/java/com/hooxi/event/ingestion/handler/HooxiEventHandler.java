@@ -1,4 +1,4 @@
-package com.hooxi.event.ingestion.router.handler;
+package com.hooxi.event.ingestion.handler;
 
 import com.hooxi.data.model.config.FindDestinationsResponse;
 import com.hooxi.data.model.event.EventStatus;
@@ -13,23 +13,23 @@ import com.hooxi.event.ingestion.data.model.response.EventIngestionResponseData;
 import com.hooxi.event.ingestion.data.model.response.HooxiEventResponse;
 import com.hooxi.event.ingestion.data.repository.HooxiEventRepository;
 import com.hooxi.event.ingestion.data.repository.WebhookEventMappingRepository;
-import java.net.URI;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.hooxi.event.ingestion.service.HooxiConfigServerService;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
@@ -43,30 +43,49 @@ public class HooxiEventHandler {
   private final HooxiEventRepository hooxiEventRepository;
 
   private final WebhookEventMappingRepository webhookEventMappingRepository;
-  private final WebClient configServiceWebClient;
-  private final URI configServerURI;
-
+  private final HooxiConfigServerService hooxiConfigServerService;
   private final RedisScript<?> queueEventsScript;
   private final ReactiveRedisOperations<String, String> redisTemplate;
 
   public HooxiEventHandler(
-      HooxiEventRepository hooxiEventRepository,
-      WebhookEventMappingRepository webhookEventMappingRepository,
-      @Value("${hooxi.config.server.url}") String configServerUrl,
-      RedisScript queueEventsScript,
-      ReactiveRedisOperations<String, String> redisTemplate) {
+          HooxiEventRepository hooxiEventRepository,
+          WebhookEventMappingRepository webhookEventMappingRepository,
+          HooxiConfigServerService hooxiConfigServerService, RedisScript queueEventsScript,
+          ReactiveRedisOperations<String, String> redisTemplate) {
     this.hooxiEventRepository = hooxiEventRepository;
     this.webhookEventMappingRepository = webhookEventMappingRepository;
+    this.hooxiConfigServerService = hooxiConfigServerService;
     this.queueEventsScript = queueEventsScript;
     this.redisTemplate = redisTemplate;
-    configServiceWebClient = WebClient.builder().build();
-    configServerURI = URI.create(configServerUrl);
+  }
+
+  @Transactional
+  public Mono<ServerResponse> ingestEvent(ServerRequest serverRequest) {
+    ParameterizedTypeReference<List<EventIngestionData>> typeRef =
+            new ParameterizedTypeReference<>() {};
+    Flux<HooxiEventEntity> hooxiEventEntityFlux =
+            serverRequest
+                    .bodyToMono(EventIngestionRequest.class)
+                    .flatMapMany(
+                            er -> {
+                              logger.debug("events from request " + er.getEvents());
+                              return Flux.fromIterable(er.getEvents());
+                            })
+                    .log()
+                    .map(HooxiEventHandler::buildHooxiEventFromRequest)
+                    .collectList()
+                    .flatMapMany(hooxiEventRepository::saveAll);
+    return buildEventIngestionDetailsFlux(hooxiEventEntityFlux)
+            .delayUntil(queueEventsInRedis())
+            .collectList()
+            .log()
+            .flatMap(HooxiEventHandler::buildResponse);
   }
 
   private static Mono<ServerResponse> buildResponse(List<EventIngestionDetails> lstEventDetails) {
     List<EventIngestionResponseData> eventIngestionResponseList =
         lstEventDetails.stream()
-            .map(
+            .peek(System.out::println).map(
                 ed -> {
                   HooxiEventEntity he = ed.getHooxiEventEntity();
                   return EventIngestionResponseData.EventIngestionResponseDataBuilder
@@ -105,29 +124,6 @@ public class HooxiEventHandler {
     return he;
   }
 
-  @Transactional
-  public Mono<ServerResponse> ingestEvent(ServerRequest serverRequest) {
-    logger.debug("base url " + configServiceWebClient);
-    ParameterizedTypeReference<List<EventIngestionData>> typeRef =
-        new ParameterizedTypeReference<>() {};
-    Flux<HooxiEventEntity> hooxiEventEntityFlux =
-        serverRequest
-            .bodyToMono(EventIngestionRequest.class)
-            .flatMapMany(
-                er -> {
-                  logger.debug("events from request " + er.getEvents());
-                  return Flux.fromIterable(er.getEvents());
-                })
-            .log()
-            .map(HooxiEventHandler::buildHooxiEventFromRequest)
-            .collectList()
-            .flatMapMany(hooxiEventRepository::saveAll);
-    return buildEventIngestionDetailsFlux(hooxiEventEntityFlux)
-        .flatMapSequential(queueEventsInRedis())
-        .collectList()
-        .flatMap(HooxiEventHandler::buildResponse);
-  }
-
   private Function<EventIngestionDetails, Publisher<? extends EventIngestionDetails>>
       queueEventsInRedis() {
     return ed -> {
@@ -141,7 +137,7 @@ public class HooxiEventHandler {
       argsList.add(interalEventId);
       argsList.add(ed.getHooxiEventEntity().getTenantId());
       argsList.addAll(webhookIds);
-      return redisTemplate.execute(queueEventsScript, List.of(), argsList).map(l -> ed);
+      return redisTemplate.execute(queueEventsScript, List.of(), argsList).then(Mono.just(ed));
     };
   }
 
@@ -156,21 +152,7 @@ public class HooxiEventHandler {
                     he.getExternalEventId()))
         .flatMapSequential(
             he ->
-                configServiceWebClient
-                    .get()
-                    .uri(
-                        uriBuilder ->
-                            uriBuilder
-                                .host(configServerURI.getHost())
-                                .port(configServerURI.getPort())
-                                .scheme(configServerURI.getScheme())
-                                .path("/config/api/v1/tenants/{tenantId}/destmappings")
-                                .queryParam("domainId", he.getDomainId())
-                                .queryParam("subdomainId", he.getSubdomainId())
-                                .queryParam("eventType", he.getEventType())
-                                .build(he.getTenantId()))
-                    .retrieve()
-                    .bodyToMono(FindDestinationsResponse.class)
+                hooxiConfigServerService.findDestinations(he)
                     .map(
                         fd -> {
                           EventIngestionDetails ed = new EventIngestionDetails();

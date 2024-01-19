@@ -12,4 +12,26 @@ public class EventIngestionRequest {
   public void setEvents(List<EventIngestionData> events) {
     this.events = events;
   }
+
+  public static final class EventIngestionRequestBuilder {
+    private List<EventIngestionData> events;
+
+    private EventIngestionRequestBuilder() {
+    }
+
+    public static EventIngestionRequestBuilder anEventIngestionRequest() {
+      return new EventIngestionRequestBuilder();
+    }
+
+    public EventIngestionRequestBuilder withEvents(List<EventIngestionData> events) {
+      this.events = events;
+      return this;
+    }
+
+    public EventIngestionRequest build() {
+      EventIngestionRequest eventIngestionRequest = new EventIngestionRequest();
+      eventIngestionRequest.setEvents(events);
+      return eventIngestionRequest;
+    }
+  }
 }

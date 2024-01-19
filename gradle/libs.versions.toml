@@ -11,8 +11,8 @@ springBootLib = { module = "org.springframework.boot:spring-boot", version.ref =
 r2dbcPostgresLib = { module = "org.postgresql:r2dbc-postgresql", version.ref = "r2dbcPostgresVersion" }
 springDocLib = { module = "org.springdoc:springdoc-openapi-starter-webflux-ui", version.ref = "springDocVersion" }
 testcontainersLib = { module = "org.testcontainers:testcontainers", version.ref = "testcontainersVersion" }
-testcontainersCassandraLib = { module = "org.testcontainers:cassandra", version.ref = "testcontainersVersion" }
 testcontainersJupiterLib = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainersVersion" }
+testcontainersPostgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainersVersion"}
 
 
 [plugins]
@@ -21,4 +21,4 @@ springDepMgmtPlugin = { id = 'io.spring.dependency-management', version.ref = 's
 
 
 [bundles]
-testcontainersBundle = ["testcontainersLib", "testcontainersJupiterLib"]
+testcontainersBundle = ["testcontainersLib", "testcontainersJupiterLib", "testcontainersPostgres"]

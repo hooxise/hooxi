@@ -5,7 +5,7 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import com.hooxi.event.ingestion.data.model.request.EventIngestionRequest;
 import com.hooxi.event.ingestion.data.model.response.EventIngestionResponse;
 import com.hooxi.event.ingestion.data.model.response.EventIngestionResponseData;
-import com.hooxi.event.ingestion.router.handler.HooxiEventHandler;
+import com.hooxi.event.ingestion.handler.HooxiEventHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -24,7 +24,7 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Configuration(proxyBeanMethods = false)
-public class HooxiEventApiRouter {
+public class  HooxiEventApiRouter {
 
   @Bean
   @RouterOperations({

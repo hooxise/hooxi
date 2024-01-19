@@ -1,21 +1,15 @@
+---
 spring:
   config:
     activate:
-      on-profile: test
-  data:
-    cassandra:
-      local-datacenter: datacenter1
-      schema-action: create_if_not_exists
-      port: 9042
-  kafka:
-    producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    properties:
-      spring:
-        json:
-          trusted:
-            packages: '*'
-hooxi_event_topic: hooxi_event_topic
-
+      on-profile: tc
+  r2dbc:
+    url: r2dbc:tc:postgresql:///testdb?TC_IMAGE_TAG=12
+logging:
+  level:
+    com.hooxi: DEBUG
 ---
+hooxi:
+  config:
+    server:
+      url: https://test.config.url:12000/
