@@ -2,6 +2,7 @@ package com.hooxi.event.ingestion;
 
 import com.hooxi.data.model.config.DestinationMappingResponseBuilder;
 import com.hooxi.data.model.config.DestinationResponseBuilder;
+import com.hooxi.data.model.config.FindDestinationsResponse;
 import com.hooxi.data.model.config.FindDestinationsResponseBuilder;
 import com.hooxi.data.model.dest.WebhookDestination;
 import com.hooxi.event.ingestion.data.model.HooxiEventEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hooxi.event.webhook.worker.EventPoller;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,29 +92,34 @@ public class HooxiEventIngestionTest {
     Mockito.when(hooxiConfigServerService.findDestinations(Mockito.any()))
         .thenReturn(
             Mono.just(
-                FindDestinationsResponseBuilder.aFindDestinationsResponse()
-                    .withDestinationMappings(
-                        List.of(
-                            DestinationMappingResponseBuilder.aDestinationMappingResponse()
-                                .withDestinationMappingId(1L)
-                                .withDomainId("domain1")
-                                .withSubdomainId("subdomain1")
-                                .withTenantId("tenant1")
-                                .withEventType("eventType1")
-                                .withDestinationInfo(
-                                    DestinationResponseBuilder.aDestinationResponse()
-                                        .withDestinationId(1L)
-                                        .withTenantId("tenant1")
-                                        .withDestination(webDst)
-                                        .build())
-                                .build()))
-                    .build()));
+                    buildDestinationResponse(webDst)));
 
     webTestClient.post().uri("/events").bodyValue(buildTestEvent())
             .exchange().expectStatus().is2xxSuccessful().expectBody().consumeWith(System.out::println).jsonPath("$.events.size()").isEqualTo(1)
             .jsonPath("$.events[0].eventId").isEqualTo("testEventId")
             .jsonPath("$.events[0].hooxiEventId").isNotEmpty();
 
+  }
+
+  @NotNull
+  private static FindDestinationsResponse buildDestinationResponse(WebhookDestination webDst) {
+    return FindDestinationsResponseBuilder.aFindDestinationsResponse()
+            .withDestinationMappings(
+                    List.of(
+                            DestinationMappingResponseBuilder.aDestinationMappingResponse()
+                                    .withDestinationMappingId(1L)
+                                    .withDomainId("domain1")
+                                    .withSubdomainId("subdomain1")
+                                    .withTenantId("tenant1")
+                                    .withEventType("eventType1")
+                                    .withDestinationInfo(
+                                            DestinationResponseBuilder.aDestinationResponse()
+                                                    .withDestinationId(1L)
+                                                    .withTenantId("tenant1")
+                                                    .withDestination(webDst)
+                                                    .build())
+                                    .build()))
+            .build();
   }
 
   private EventIngestionRequest buildTestEvent() {
