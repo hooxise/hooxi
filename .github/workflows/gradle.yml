@@ -27,7 +27,7 @@ jobs:
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
       
       - name: Build config server
-        run: ./gradlew clean hooxi-config-server:build
+        run: ./gradlew -p hooxi-config-server clean build bootBuildImage
   
       - name: Build event ingestion server
-        run: ./gradlew hooxi-event-ingestion-server:build
+        run: ./gradlew -p hooxi-event-ingestion-server clean build bootBuildImage
