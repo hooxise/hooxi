@@ -69,6 +69,7 @@ public class EventPoller {
               String tenantId = tenantWebhookId[0].substring(1, tenantWebhookId[0].length() - 1);
               String destinationId = tenantWebhookId[1];
               List<String> eventIds = webhookEventsPair.getEventIds();
+              logger.debug("eventIds " + eventIds);
               Mono<DestinationDetails> destDetailsMono =
                   getDestinationDetailsFromConfigServer(tenantId, destinationId);
               return destDetailsMono.map(
@@ -82,7 +83,9 @@ public class EventPoller {
                                 try {
                                   return webhookInvoker
                                       .invokeWebhookWithRetry(
-                                          he, destDetails.getDestinationResponse())
+                                          he,
+                                          destDetails.getDestinationResponse(),
+                                          destDetails.getDestinationSecurityConfigResponse())
                                       .flatMap(
                                           str ->
                                               hooxiEventStatusUpdaterService.updateHooxiEventStatus(
@@ -99,9 +102,11 @@ public class EventPoller {
                                 } catch (WebhookExecutionFailureException wex) {
                                   logger.error("webhook execution failed", wex);
                                   hooxiEventStatusUpdaterService
-                                          .updateHooxiEventStatus(
-                                                    he.getInternalEventId(), destDetails.getDestinationId(), EventStatus.FAILURE)
-                                            .subscribe();
+                                      .updateHooxiEventStatus(
+                                          he.getInternalEventId(),
+                                          destDetails.getDestinationId(),
+                                          EventStatus.FAILURE)
+                                      .subscribe();
                                   redisTemplate
                                       .opsForSet()
                                       .add(
@@ -130,7 +135,8 @@ public class EventPoller {
                                         List.of(),
                                         List.of("{" + tenantId + "}:" + destinationId))
                                     .subscribe();
-                              }));
+                              })
+                          .subscribe());
             })
         .subscribe();
   }
@@ -141,7 +147,7 @@ public class EventPoller {
         .zipWith(getDestinationSecurityConfigFromConfigServer(tenantId, destinationId))
         .flatMap(
             (tuple) -> {
-              logger.debug("destination response " + tuple.getT1());
+              logger.debug("destination response " + tuple.getT1() + " " + tuple.getT2());
               return Mono.just(
                   DestinationDetails.DestinationDetailsBuilder.aDestinationDetails()
                       .withDestinationResponse(tuple.getT1())

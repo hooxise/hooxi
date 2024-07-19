@@ -1,9 +1,12 @@
 package com.hooxi.data.model.config;
 
 import com.hooxi.data.model.dest.security.DestinationSecurityConfig;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class DestinationSecurityConfigResponse {
+  @Schema(description = "destination identifier")
   private Long destinationId;
+  @Schema(description = "security information used while invoking webhook")
   private DestinationSecurityConfig destinationSecurityConfig;
 
   public Long getDestinationId() {
@@ -20,5 +23,13 @@ public class DestinationSecurityConfigResponse {
 
   public void setDestinationSecurityConfig(DestinationSecurityConfig destinationSecurityConfig) {
     this.destinationSecurityConfig = destinationSecurityConfig;
+  }
+
+  @Override
+  public String toString() {
+    return "DestinationSecurityConfigResponse{" +
+            "destinationId=" + destinationId +
+            ", destinationSecurityConfig=" + destinationSecurityConfig +
+            '}';
   }
 }

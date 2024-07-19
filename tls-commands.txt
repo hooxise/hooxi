@@ -1,0 +1,13 @@
+openssl ecparam -name prime256v1 -genkey -noout -out ca.key
+openssl req -new -x509 -sha256 -key ca.key -out ca.crt
+openssl genrsa -out hooxi-server.key 2048
+openssl req -new -key hooxi-server.key -out hooxi-server.csr
+openssl x509 -req -in hooxi-server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out hooxi-server.crt -days 825 -sha256 -extfile hooxi-san-csr.cnf
+openssl pkcs12 -export -out hooxi-server.p12 -inkey hooxi-server.key -in hooxi-server.crt -certfile ca.crt
+
+
+#truststore
+openssl pkcs12 -export -out hooxi-server.p12 -inkey hooxi-server.key -in hooxi-server.crt -certfile ca.crt
+keytool -importcert -storetype PKCS12 -keystore hooxi-truststore.p12 -storepass hooxi123 -alias ca -file ca.crt
+
+

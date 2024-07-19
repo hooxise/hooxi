@@ -13,14 +13,12 @@ import com.hooxi.event.ingestion.data.model.response.EventIngestionResponseData;
 import com.hooxi.event.ingestion.data.model.response.HooxiEventResponse;
 import com.hooxi.event.ingestion.data.repository.HooxiEventRepository;
 import com.hooxi.event.ingestion.data.repository.WebhookEventMappingRepository;
-
+import com.hooxi.event.ingestion.service.HooxiConfigServerService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.hooxi.event.ingestion.service.HooxiConfigServerService;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +46,11 @@ public class HooxiEventHandler {
   private final ReactiveRedisOperations<String, String> redisTemplate;
 
   public HooxiEventHandler(
-          HooxiEventRepository hooxiEventRepository,
-          WebhookEventMappingRepository webhookEventMappingRepository,
-          HooxiConfigServerService hooxiConfigServerService, RedisScript queueEventsScript,
-          ReactiveRedisOperations<String, String> redisTemplate) {
+      HooxiEventRepository hooxiEventRepository,
+      WebhookEventMappingRepository webhookEventMappingRepository,
+      HooxiConfigServerService hooxiConfigServerService,
+      RedisScript queueEventsScript,
+      ReactiveRedisOperations<String, String> redisTemplate) {
     this.hooxiEventRepository = hooxiEventRepository;
     this.webhookEventMappingRepository = webhookEventMappingRepository;
     this.hooxiConfigServerService = hooxiConfigServerService;
@@ -62,30 +61,31 @@ public class HooxiEventHandler {
   @Transactional
   public Mono<ServerResponse> ingestEvent(ServerRequest serverRequest) {
     ParameterizedTypeReference<List<EventIngestionData>> typeRef =
-            new ParameterizedTypeReference<>() {};
+        new ParameterizedTypeReference<>() {};
     Flux<HooxiEventEntity> hooxiEventEntityFlux =
-            serverRequest
-                    .bodyToMono(EventIngestionRequest.class)
-                    .flatMapMany(
-                            er -> {
-                              logger.debug("events from request " + er.getEvents());
-                              return Flux.fromIterable(er.getEvents());
-                            })
-                    .log()
-                    .map(HooxiEventHandler::buildHooxiEventFromRequest)
-                    .collectList()
-                    .flatMapMany(hooxiEventRepository::saveAll);
-    return buildEventIngestionDetailsFlux(hooxiEventEntityFlux)
-            .delayUntil(queueEventsInRedis())
-            .collectList()
+        serverRequest
+            .bodyToMono(EventIngestionRequest.class)
+            .flatMapMany(
+                er -> {
+                  logger.debug("events from request " + er.getEvents());
+                  return Flux.fromIterable(er.getEvents());
+                })
             .log()
-            .flatMap(HooxiEventHandler::buildResponse);
+            .map(HooxiEventHandler::buildHooxiEventFromRequest)
+            .collectList()
+            .flatMapMany(hooxiEventRepository::saveAll);
+    return buildEventIngestionDetailsFlux(hooxiEventEntityFlux)
+        .delayUntil(queueEventsInRedis())
+        .collectList()
+        .log()
+        .flatMap(HooxiEventHandler::buildResponse);
   }
 
   private static Mono<ServerResponse> buildResponse(List<EventIngestionDetails> lstEventDetails) {
     List<EventIngestionResponseData> eventIngestionResponseList =
         lstEventDetails.stream()
-            .peek(System.out::println).map(
+            .peek(System.out::println)
+            .map(
                 ed -> {
                   HooxiEventEntity he = ed.getHooxiEventEntity();
                   return EventIngestionResponseData.EventIngestionResponseDataBuilder
@@ -152,7 +152,8 @@ public class HooxiEventHandler {
                     he.getExternalEventId()))
         .flatMapSequential(
             he ->
-                hooxiConfigServerService.findDestinations(he)
+                hooxiConfigServerService
+                    .findDestinations(he)
                     .map(
                         fd -> {
                           EventIngestionDetails ed = new EventIngestionDetails();

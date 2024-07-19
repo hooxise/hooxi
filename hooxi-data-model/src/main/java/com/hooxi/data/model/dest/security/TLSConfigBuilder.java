@@ -34,7 +34,7 @@ public final class TLSConfigBuilder {
 
   public TLSConfig build() {
     TLSConfig tLSConfig = new TLSConfig();
-    tLSConfig.setCeCert(ceCert);
+    tLSConfig.setCaCert(ceCert);
     tLSConfig.setPublicKey(publicKey);
     tLSConfig.setPrivateKey(privateKey);
     tLSConfig.setPassword(password);

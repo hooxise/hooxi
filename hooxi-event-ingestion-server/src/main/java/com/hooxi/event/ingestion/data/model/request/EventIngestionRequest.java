@@ -16,8 +16,7 @@ public class EventIngestionRequest {
   public static final class EventIngestionRequestBuilder {
     private List<EventIngestionData> events;
 
-    private EventIngestionRequestBuilder() {
-    }
+    private EventIngestionRequestBuilder() {}
 
     public static EventIngestionRequestBuilder anEventIngestionRequest() {
       return new EventIngestionRequestBuilder();

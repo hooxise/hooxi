@@ -1,7 +1,12 @@
 package com.hooxi.data.model.dest.security;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class DestinationSecurityConfig {
+
+  @Schema(description = "TLS used for invoking webhook")
   private TLSConfig tlsConfig;
+  @Schema(description = "information used for authenticating webhook call")
   private AuthenticationConfig authConfig;
 
   public TLSConfig getTlsConfig() {
@@ -18,5 +23,13 @@ public class DestinationSecurityConfig {
 
   public void setAuthConfig(AuthenticationConfig authConfig) {
     this.authConfig = authConfig;
+  }
+
+  @Override
+  public String toString() {
+    return "DestinationSecurityConfig{" +
+            "tlsConfig=" + tlsConfig +
+            ", authConfig=" + authConfig +
+            '}';
   }
 }

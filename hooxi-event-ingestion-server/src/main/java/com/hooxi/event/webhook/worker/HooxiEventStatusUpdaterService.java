@@ -56,6 +56,7 @@ public class HooxiEventStatusUpdaterService {
   }
 
   public Mono<HooxiEventEntity> findHooxiEventEntity(String eventId) {
+    logger.debug("fetching event from db " + eventId);
     return hooxiEventRepository.findById(eventId);
   }
 }

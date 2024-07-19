@@ -39,8 +39,7 @@ public class EventIngestionData {
     private String payload;
     private EventMetadata eventMetadata;
 
-    private EventIngestionDataBuilder() {
-    }
+    private EventIngestionDataBuilder() {}
 
     public static EventIngestionDataBuilder anEventIngestionData() {
       return new EventIngestionDataBuilder();

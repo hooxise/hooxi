@@ -6,6 +6,8 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import com.hooxi.data.model.config.DestinationResponse;
 import com.hooxi.data.model.config.DestinationResponseBuilder;
+import com.hooxi.data.model.config.DestinationSecurityConfigResponse;
+import com.hooxi.data.model.config.DestinationSecurityConfigResponseBuilder;
 import com.hooxi.data.model.dest.WebhookDestination;
 import com.hooxi.event.ingestion.data.model.EventStatus;
 import com.hooxi.event.ingestion.data.model.HooxiEventEntity;
@@ -16,10 +18,7 @@ import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import java.net.HttpURLConnection;
-import java.time.Duration;
 import java.util.HashMap;
-
-import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,61 +91,73 @@ public class WebhookInvokerTest {
 
     DestinationResponse dr = buildDestinationResponseForTest();
 
-   StepVerifier.create(webhookInvoker.invokeWebhookWithRetry(testHe, dr))
+    DestinationSecurityConfigResponse destSecConfig = buildDestSecConfigForTest();
+
+    StepVerifier.create(webhookInvoker.invokeWebhookWithRetry(testHe, dr, destSecConfig))
         .expectSubscription()
         .expectNext("{}")
         .verifyComplete();
 
-   /*StepVerifier.withVirtualTime(() -> webhookInvoker.invokeWebhookWithRetry(testHe, dr))
-           .expectSubscription()
-           .expectNoEvent(Duration.ofSeconds(8))
-           //.thenAwait(Duration.ofSeconds(4))
-           .expectNext("{}")
-           .verifyComplete();*/
+    /*StepVerifier.withVirtualTime(() -> webhookInvoker.invokeWebhookWithRetry(testHe, dr))
+    .expectSubscription()
+    .expectNoEvent(Duration.ofSeconds(8))
+    //.thenAwait(Duration.ofSeconds(4))
+    .expectNext("{}")
+    .verifyComplete();*/
     wiremock.verify(3, WireMock.postRequestedFor(WireMock.urlEqualTo("/api/webhook")));
   }
 
-    @Test
-    void shouldThrowErrorOnMaxRetries() throws Exception {
-        wiremock.stubFor(
-                WireMock.post("/api/webhook")
-                        .willReturn(
-                                ResponseDefinitionBuilder.responseDefinition()
-                                        .withStatus(HttpURLConnection.HTTP_INTERNAL_ERROR)));
+  @NotNull
+  private static DestinationSecurityConfigResponse buildDestSecConfigForTest() {
+    return DestinationSecurityConfigResponseBuilder.aDestinationSecurityConfigResponse()
+        .withDestinationId(1l)
+        .build();
+  }
 
-        HooxiEventEntity testHe = buildHooxiEventEntityForTest();
+  @Test
+  void shouldThrowErrorOnMaxRetries() throws Exception {
+    wiremock.stubFor(
+        WireMock.post("/api/webhook")
+            .willReturn(
+                ResponseDefinitionBuilder.responseDefinition()
+                    .withStatus(HttpURLConnection.HTTP_INTERNAL_ERROR)));
 
-        DestinationResponse dr = buildDestinationResponseForTest();
+    HooxiEventEntity testHe = buildHooxiEventEntityForTest();
 
-        StepVerifier.create(webhookInvoker.invokeWebhookWithRetry(testHe, dr))
-                .expectSubscription()
-                .expectError(WebhookExecutionFailureException.class)
-                .verify();
+    DestinationResponse dr = buildDestinationResponseForTest();
 
-        wiremock.verify(3, WireMock.postRequestedFor(WireMock.urlEqualTo("/api/webhook")));
-    }
+    DestinationSecurityConfigResponse destSecConfig = buildDestSecConfigForTest();
 
+    StepVerifier.create(webhookInvoker.invokeWebhookWithRetry(testHe, dr, destSecConfig))
+        .expectSubscription()
+        .expectError(WebhookExecutionFailureException.class)
+        .verify();
 
-    @Test
-    void shouldSucceedWebhookInvocation() throws Exception {
-        wiremock.stubFor(
-                WireMock.post("/api/webhook")
-                        .willReturn(
-                                ResponseDefinitionBuilder.responseDefinition()
-                                        .withStatus(HttpURLConnection.HTTP_OK)
-                                        .withBody("STATUS OK")));
+    wiremock.verify(3, WireMock.postRequestedFor(WireMock.urlEqualTo("/api/webhook")));
+  }
 
-        HooxiEventEntity testHe = buildHooxiEventEntityForTest();
+  @Test
+  void shouldSucceedWebhookInvocation() throws Exception {
+    wiremock.stubFor(
+        WireMock.post("/api/webhook")
+            .willReturn(
+                ResponseDefinitionBuilder.responseDefinition()
+                    .withStatus(HttpURLConnection.HTTP_OK)
+                    .withBody("STATUS OK")));
 
-        DestinationResponse dr = buildDestinationResponseForTest();
+    HooxiEventEntity testHe = buildHooxiEventEntityForTest();
 
-        StepVerifier.create(webhookInvoker.invokeWebhookWithRetry(testHe, dr))
-                .expectSubscription()
-                .expectNext("STATUS OK")
-                .verifyComplete();
+    DestinationResponse dr = buildDestinationResponseForTest();
 
-        wiremock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/api/webhook")));
-    }
+    DestinationSecurityConfigResponse destSecConfig = buildDestSecConfigForTest();
+
+    StepVerifier.create(webhookInvoker.invokeWebhookWithRetry(testHe, dr, destSecConfig))
+        .expectSubscription()
+        .expectNext("STATUS OK")
+        .verifyComplete();
+
+    wiremock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/api/webhook")));
+  }
 
   @NotNull
   private DestinationResponse buildDestinationResponseForTest() {
