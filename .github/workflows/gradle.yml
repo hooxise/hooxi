@@ -25,16 +25,9 @@ jobs:
       # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-      - name: cd hooxi-config-server
-        run: cd hooxi-config-server
-        shell: bash
       
-      - name: Build with Gradle Wrapper
-        run: ./gradlew build
-
-      - name: cd ../hooxi-event-ingestion-server
-        run: cd hooxi-event-ingestion-server
-        shell: bash
+      - name: Build config server
+        run: ./gradlew clean hooxi-config-server:build
   
-      - name: Build with Gradle Wrapper
-        run: ./gradlew build
+      - name: Build event ingestion server
+        run: ./gradlew hooxi-event-ingestion-server:build
