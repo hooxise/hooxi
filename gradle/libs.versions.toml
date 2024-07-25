@@ -2,11 +2,13 @@
 springBootVersion = "3.1.2"
 r2dbcPostgresVersion = "1.0.2.RELEASE"
 springDocVersion = "2.1.0"
+springDocOpenApiGradleVersion = "1.9.0"
 springDepMgmtPluginVersion = "1.1.3"
 testcontainersVersion = "1.16.2"
 springCloudVersion = "2022.0.4"
 wiremockSpringBootVersion = "2.1.2"
 hakkyVersion = "8.3.5"
+openapiGeneratorVersion = "6.6.0"
 
 [libraries]
 springBootLib = { module = "org.springframework.boot:spring-boot", version.ref = "springBootVersion" }
@@ -22,7 +24,8 @@ wiremockSpringBoot =  {module = "com.maciejwalkowiak.spring:wiremock-spring-boot
 [plugins]
 springBootPlugin = { id = "org.springframework.boot", version.ref = "springBootVersion" }
 springDepMgmtPlugin = { id = 'io.spring.dependency-management', version.ref = 'springDepMgmtPluginVersion' }
-
+springdocOpenApiPlugin = { id = "org.springdoc.openapi-gradle-plugin", version.ref = "springDocOpenApiGradleVersion" }
+openapiGeneratorPlugin = { id = "org.openapi.generator", version.ref = "openapiGeneratorVersion" }
 
 [bundles]
 testcontainersBundle = ["testcontainersLib", "testcontainersJupiterLib", "testcontainersPostgres"]

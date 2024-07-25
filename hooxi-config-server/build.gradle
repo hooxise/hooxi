@@ -1,8 +1,10 @@
 plugins {
-    alias(libs.plugins.springBootPlugin)
-    alias(libs.plugins.springDepMgmtPlugin)
     id 'java'
     id "com.diffplug.spotless" version "6.21.0"
+    alias(libs.plugins.springBootPlugin)
+    alias(libs.plugins.springDepMgmtPlugin)
+    alias(libs.plugins.springdocOpenApiPlugin)
+    alias(libs.plugins.openapiGeneratorPlugin)
 }
 
 
@@ -28,6 +30,25 @@ spotless {
     }
 }
 
+openApi {
+    apiDocsUrl.set("http://localhost:12000/config/api/v1/v3/api-docs")
+    outputDir.set(file("$buildDir/docs"))
+    outputFileName.set("hooxi-config-swagger.yaml")
+}
+
+openApiGenerate {
+    generatorName = "java"
+    inputSpec = "$rootDir/build/docs/hooxi-config-swagger.yaml".toString()
+    outputDir = "$rootDir/build/generated-client"
+    invokerPackage = "{$group}.client"
+    apiPackage = "{$group}.client.controllers"
+    modelPackage = "{$group}.client.models"
+    groupId = "$group"
+    id = "client"
+    version = "${version}"
+    cleanupOutput = true
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation libs.r2dbcPostgresLib
@@ -50,3 +71,6 @@ test {
 bootBuildImage {
     imageName = "docker.io/fusionswap/hooxi-config-server:${project.version}"
 }
+
+tasks.getByName('openApiGenerate').dependsOn(tasks.generateOpenApiDocs)
+tasks.getByName('openApiGenerate').mustRunAfter(tasks.generateOpenApiDocs)
