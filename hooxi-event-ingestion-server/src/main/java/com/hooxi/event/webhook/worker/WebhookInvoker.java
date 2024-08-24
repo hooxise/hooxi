@@ -17,6 +17,7 @@ import nl.altindag.ssl.netty.util.NettySslUtils;
 import nl.altindag.ssl.pem.util.PemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -86,8 +87,22 @@ public class WebhookInvoker {
         .post()
         .uri(dst.getDestination().getEndpoint())
         .bodyValue(he.getPayload())
-        .retrieve()
-        .bodyToMono(String.class)
+            .exchangeToMono( clientResponse -> {
+              StringBuilder sb = new StringBuilder();
+              sb.append("status :");
+              HttpStatusCode respStatus = clientResponse.statusCode();
+              sb.append(respStatus.value()).append("\n");
+              sb.append("headers :").append("\n");;
+              clientResponse.headers().asHttpHeaders().forEach((h, hvalue) -> {
+                sb.append(h).append(":").append(hvalue).append("\n");;
+              });
+
+              if(respStatus.is2xxSuccessful()) {
+                return clientResponse.bodyToMono(String.class).map( body -> sb.append("body: \n").toString().concat(body));
+              } else {
+                return Mono.error(new WebhookExecutionFailureException("non 2xx response"));
+              }
+            })
         .onErrorResume(Mono::error)
         .retryWhen(
             Retry.backoff(2, Duration.of(2, ChronoUnit.SECONDS))
