@@ -39,7 +39,7 @@ public class WebhookInvoker {
   }
 
   @Transactional
-  public Mono<Object> invokeWebhookWithRetry(
+  public Mono<String> invokeWebhookWithRetry(
       HooxiEventEntity he,
       DestinationResponse dst,
       DestinationSecurityConfigResponse dstSecConfig) {
@@ -108,6 +108,7 @@ public class WebhookInvoker {
               String responseHeaders = sb.toString();
               return clientResponse
                   .bodyToMono(String.class)
+                  .switchIfEmpty(Mono.just(""))
                   .map(
                       respBody -> {
                         WebhookLogEntity webhookLogEntity = new WebhookLogEntity();
@@ -128,7 +129,7 @@ public class WebhookInvoker {
                     + "\n"
                     + webhookLogEntity.getResponsePayload();
               } else {
-                return Mono.error(new WebhookExecutionFailureException("non 2xx response"));
+                throw new WebhookExecutionFailureException("non 2xx response");
               }
             })
         .onErrorResume(Mono::error)

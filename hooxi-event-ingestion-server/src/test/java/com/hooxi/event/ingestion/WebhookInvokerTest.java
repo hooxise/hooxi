@@ -1,5 +1,7 @@
 package com.hooxi.event.ingestion;
 
+import static org.mockito.ArgumentMatchers.any;
+
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -11,6 +13,7 @@ import com.hooxi.data.model.config.DestinationSecurityConfigResponseBuilder;
 import com.hooxi.data.model.dest.WebhookDestination;
 import com.hooxi.event.ingestion.data.model.EventStatus;
 import com.hooxi.event.ingestion.data.model.HooxiEventEntity;
+import com.hooxi.event.ingestion.data.model.WebhookLogEntity;
 import com.hooxi.event.webhook.worker.HooxiEventStatusUpdaterService;
 import com.hooxi.event.webhook.worker.WebhookInvoker;
 import com.hooxi.event.webhook.worker.exception.WebhookExecutionFailureException;
@@ -22,10 +25,13 @@ import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @SpringBootTest(classes = WebhookInvoker.class)
@@ -92,10 +98,14 @@ public class WebhookInvokerTest {
     DestinationResponse dr = buildDestinationResponseForTest();
 
     DestinationSecurityConfigResponse destSecConfig = buildDestSecConfigForTest();
+    Mockito.when(hooxiEventStatusUpdaterService.saveWebhookLog(any()))
+        .thenAnswer(
+            (Answer<Mono<WebhookLogEntity>>)
+                invocation -> Mono.just((WebhookLogEntity) invocation.getArguments()[0]));
 
     StepVerifier.create(webhookInvoker.invokeWebhookWithRetry(testHe, dr, destSecConfig))
         .expectSubscription()
-        .expectNext("{}")
+        .expectNextMatches(o -> o.toString().contains("{}"))
         .verifyComplete();
 
     /*StepVerifier.withVirtualTime(() -> webhookInvoker.invokeWebhookWithRetry(testHe, dr))
@@ -127,7 +137,10 @@ public class WebhookInvokerTest {
     DestinationResponse dr = buildDestinationResponseForTest();
 
     DestinationSecurityConfigResponse destSecConfig = buildDestSecConfigForTest();
-
+    Mockito.when(hooxiEventStatusUpdaterService.saveWebhookLog(any()))
+        .thenAnswer(
+            (Answer<Mono<WebhookLogEntity>>)
+                invocation -> Mono.just((WebhookLogEntity) invocation.getArguments()[0]));
     StepVerifier.create(webhookInvoker.invokeWebhookWithRetry(testHe, dr, destSecConfig))
         .expectSubscription()
         .expectError(WebhookExecutionFailureException.class)
@@ -151,9 +164,14 @@ public class WebhookInvokerTest {
 
     DestinationSecurityConfigResponse destSecConfig = buildDestSecConfigForTest();
 
+    Mockito.when(hooxiEventStatusUpdaterService.saveWebhookLog(any()))
+        .thenAnswer(
+            (Answer<Mono<WebhookLogEntity>>)
+                invocation -> Mono.just((WebhookLogEntity) invocation.getArguments()[0]));
+
     StepVerifier.create(webhookInvoker.invokeWebhookWithRetry(testHe, dr, destSecConfig))
         .expectSubscription()
-        .expectNext("STATUS OK")
+        .expectNextMatches(o -> o.toString().contains("STATUS OK"))
         .verifyComplete();
 
     wiremock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/api/webhook")));
