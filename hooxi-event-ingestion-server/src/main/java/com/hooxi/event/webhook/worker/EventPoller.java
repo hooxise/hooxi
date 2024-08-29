@@ -75,8 +75,7 @@ public class EventPoller {
               return destDetailsMono.map(
                   destDetails ->
                       Flux.fromIterable(eventIds)
-                          .flatMap(
-                                  hooxiEventStatusUpdaterService::findHooxiEventEntity)
+                          .flatMap(hooxiEventStatusUpdaterService::findHooxiEventEntity)
                           .flatMap(
                               he -> {
                                 try {

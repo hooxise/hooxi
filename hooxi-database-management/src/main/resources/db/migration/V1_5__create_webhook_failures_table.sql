@@ -1,8 +1,7 @@
-create table hooxi.webhook_failures
+create table hooxi.webhook_failure_log
 (
-    internal_event_id varchar(50)
-        constraint webhook_failures_pk
-            primary key,
+    id serial constraint webhook_failures_pk primary key,
+    internal_event_id varchar(50),
     external_event_id varchar(50),
     timestamp numeric,
     http_status numeric,
@@ -10,6 +9,6 @@ create table hooxi.webhook_failures
     response_headers varchar
 );
 
-alter table hooxi.webhook_failures
+alter table hooxi.webhook_failure_log
     owner to hooxi;
 
