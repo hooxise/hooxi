@@ -4,7 +4,7 @@ import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 
-public class WebhookFailureLogEntity {
+public class WebhookLogEntity {
   @Id
   @Column("id")
   private Long id;
@@ -87,7 +87,7 @@ public class WebhookFailureLogEntity {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    WebhookFailureLogEntity that = (WebhookFailureLogEntity) o;
+    WebhookLogEntity that = (WebhookLogEntity) o;
     return Objects.equals(id, that.id)
         && Objects.equals(internalEventId, that.internalEventId)
         && Objects.equals(externalEventId, that.externalEventId);

@@ -4,7 +4,7 @@ import com.hooxi.data.model.config.DestinationResponse;
 import com.hooxi.data.model.config.DestinationSecurityConfigResponse;
 import com.hooxi.data.model.dest.security.TLSConfig;
 import com.hooxi.event.ingestion.data.model.HooxiEventEntity;
-import com.hooxi.event.ingestion.data.model.WebhookFailureLogEntity;
+import com.hooxi.event.ingestion.data.model.WebhookLogEntity;
 import com.hooxi.event.webhook.worker.exception.WebhookExecutionFailureException;
 import io.netty.handler.ssl.SslContext;
 import java.io.ByteArrayInputStream;
@@ -18,6 +18,7 @@ import nl.altindag.ssl.netty.util.NettySslUtils;
 import nl.altindag.ssl.pem.util.PemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,7 @@ public class WebhookInvoker {
   }
 
   @Transactional
-  public Mono<String> invokeWebhookWithRetry(
+  public Mono<Object> invokeWebhookWithRetry(
       HooxiEventEntity he,
       DestinationResponse dst,
       DestinationSecurityConfigResponse dstSecConfig) {
@@ -97,46 +98,38 @@ public class WebhookInvoker {
               HttpStatusCode respStatus = clientResponse.statusCode();
               sb.append(respStatus.value()).append("\n");
               sb.append("headers :").append("\n");
-              ;
               clientResponse
                   .headers()
                   .asHttpHeaders()
                   .forEach(
                       (h, hvalue) -> {
                         sb.append(h).append(":").append(hvalue).append("\n");
-                        ;
                       });
               String responseHeaders = sb.toString();
-              Mono<String> responseBodyMono = clientResponse.bodyToMono(String.class);
-              if (respStatus.is2xxSuccessful()) {
-                return responseBodyMono;
-              } else {
-                WebhookFailureLogEntity webhookFailureLogEntity = new WebhookFailureLogEntity();
-                webhookFailureLogEntity.setExternalEventId(he.getExternalEventId());
-                webhookFailureLogEntity.setInternalEventId(he.getInternalEventId());
-                webhookFailureLogEntity.setTimestamp(System.currentTimeMillis());
-                webhookFailureLogEntity.setHttpStatus(respStatus.value());
-                webhookFailureLogEntity.setResponseHeaders(responseHeaders);
-                return responseBodyMono.flatMap(
-                    respBody -> {
-                      webhookFailureLogEntity.setResponsePayload(respBody);
-                      return hooxiEventStatusUpdaterService
-                          .saveWebhookFailure(webhookFailureLogEntity)
-                          .flatMap(
-                              wfe ->
-                                  Mono.error(
-                                      new WebhookExecutionFailureException("non 2xx response")));
-                    });
-              }
-              // return Mono.error(new WebhookExecutionFailureException("non 2xx response"));
-            })
-        .onErrorResume(Mono::error)
-        .retryWhen(
-            Retry.backoff(2, Duration.of(2, ChronoUnit.SECONDS))
-                .onRetryExhaustedThrow(
-                    (retryBackoffSpec, retrySignal) -> {
-                      throw new WebhookExecutionFailureException(
-                          "webhook execution failed for " + dst.getDestinationId());
-                    }));
+              return clientResponse.bodyToMono(String.class).map( respBody -> {
+                  WebhookLogEntity webhookLogEntity = new WebhookLogEntity();
+                  webhookLogEntity.setExternalEventId(he.getExternalEventId());
+                  webhookLogEntity.setInternalEventId(he.getInternalEventId());
+                  webhookLogEntity.setTimestamp(System.currentTimeMillis());
+                  webhookLogEntity.setHttpStatus(respStatus.value());
+                  webhookLogEntity.setResponseHeaders(responseHeaders);
+                  webhookLogEntity.setResponsePayload(respBody);
+                  return webhookLogEntity;
+              });
+            }).flatMap(hooxiEventStatusUpdaterService::saveWebhookLog).map(webhookLogEntity -> {
+                if(HttpStatus.resolve(webhookLogEntity.getHttpStatus()).is2xxSuccessful()) {
+                    return webhookLogEntity.getResponseHeaders() + "\n" + webhookLogEntity.getResponsePayload();
+                } else {
+                    return Mono.error(
+                            new WebhookExecutionFailureException("non 2xx response"));
+                }
+            }).onErrorResume(Mono::error)
+            .retryWhen(
+                    Retry.backoff(2, Duration.of(2, ChronoUnit.SECONDS))
+                            .onRetryExhaustedThrow(
+                                    (retryBackoffSpec, retrySignal) -> {
+                                        throw new WebhookExecutionFailureException(
+                                                "webhook execution failed for " + dst.getDestinationId());
+                                    }));
   }
 }

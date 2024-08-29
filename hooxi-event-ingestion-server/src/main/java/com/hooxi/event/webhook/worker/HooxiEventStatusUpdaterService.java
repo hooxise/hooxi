@@ -3,7 +3,7 @@ package com.hooxi.event.webhook.worker;
 import com.hooxi.event.ingestion.data.model.EventStatus;
 import com.hooxi.event.ingestion.data.model.HooxiEventEntity;
 import com.hooxi.event.ingestion.data.model.WebhookEventMapping;
-import com.hooxi.event.ingestion.data.model.WebhookFailureLogEntity;
+import com.hooxi.event.ingestion.data.model.WebhookLogEntity;
 import com.hooxi.event.ingestion.data.repository.HooxiEventRepository;
 import com.hooxi.event.ingestion.data.repository.WebhookEventMappingRepository;
 import com.hooxi.event.ingestion.data.repository.WebhookFailureLogRepository;
@@ -64,9 +64,9 @@ public class HooxiEventStatusUpdaterService {
     logger.debug("fetching event from db " + eventId);
     return hooxiEventRepository.findById(eventId);
   }
-  
-  public Mono<WebhookFailureLogEntity> saveWebhookFailure(
-      WebhookFailureLogEntity webhookFailureLogEntity) {
-    return webhookFailureLogRepository.save(webhookFailureLogEntity);
+
+  public Mono<WebhookLogEntity> saveWebhookLog(
+      WebhookLogEntity webhookLogEntity) {
+    return webhookFailureLogRepository.save(webhookLogEntity);
   }
 }
