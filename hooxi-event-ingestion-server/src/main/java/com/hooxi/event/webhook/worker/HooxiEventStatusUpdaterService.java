@@ -65,8 +65,7 @@ public class HooxiEventStatusUpdaterService {
     return hooxiEventRepository.findById(eventId);
   }
 
-  public Mono<WebhookLogEntity> saveWebhookLog(
-      WebhookLogEntity webhookLogEntity) {
+  public Mono<WebhookLogEntity> saveWebhookLog(WebhookLogEntity webhookLogEntity) {
     return webhookFailureLogRepository.save(webhookLogEntity);
   }
 }

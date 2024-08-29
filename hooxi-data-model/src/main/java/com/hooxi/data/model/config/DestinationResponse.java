@@ -41,10 +41,14 @@ public class DestinationResponse {
 
   @Override
   public String toString() {
-    return "DestinationResponse{" +
-            "destinationId=" + destinationId +
-            ", tenantId='" + tenantId + '\'' +
-            ", destination=" + destination +
-            '}';
+    return "DestinationResponse{"
+        + "destinationId="
+        + destinationId
+        + ", tenantId='"
+        + tenantId
+        + '\''
+        + ", destination="
+        + destination
+        + '}';
   }
 }

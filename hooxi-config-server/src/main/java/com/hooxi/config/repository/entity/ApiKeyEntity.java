@@ -7,123 +7,125 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table("api_key")
 public class ApiKeyEntity {
 
-    @Id
-    @Column("api_key_id")
-    private Long apiKeyId;
+  @Id
+  @Column("api_key_id")
+  private Long apiKeyId;
 
-    @Column("api_key_hash")
-    private String apiKeyHash;
-    @Column("api_key_permissions")
-    private String apiKeyPermissions;
+  @Column("api_key_hash")
+  private String apiKeyHash;
 
-    @Column("create_ts")
-    private Long apiKeyCreateTS;
-    @Column("expiration_ts")
-    private Long apiKeyExpirationTS;
+  @Column("api_key_permissions")
+  private String apiKeyPermissions;
 
-    @Column("api_key_name")
-    private String apiKeyName;
+  @Column("create_ts")
+  private Long apiKeyCreateTS;
 
-    @Column("description")
-    private String apiKeyDescription;
+  @Column("expiration_ts")
+  private Long apiKeyExpirationTS;
 
-    @Column("created_by")
-    private String createdBy;
+  @Column("api_key_name")
+  private String apiKeyName;
 
-    @Column("updated_by")
-    private String updatedBy;
+  @Column("description")
+  private String apiKeyDescription;
 
-    @Column("update_ts")
-    private Long apiKeyUpdateTS;
+  @Column("created_by")
+  private String createdBy;
 
-    @Column("is_active")
-    private Boolean isActive;
+  @Column("updated_by")
+  private String updatedBy;
 
-    public Long getApiKeyId() {
-        return apiKeyId;
-    }
+  @Column("update_ts")
+  private Long apiKeyUpdateTS;
 
-    public void setApiKeyId(Long apiKeyId) {
-        this.apiKeyId = apiKeyId;
-    }
+  @Column("is_active")
+  private Boolean isActive;
 
-    public String getApiKeyHash() {
-        return apiKeyHash;
-    }
+  public Long getApiKeyId() {
+    return apiKeyId;
+  }
 
-    public void setApiKeyHash(String apiKeyHash) {
-        this.apiKeyHash = apiKeyHash;
-    }
+  public void setApiKeyId(Long apiKeyId) {
+    this.apiKeyId = apiKeyId;
+  }
 
-    public String getApiKeyPermissions() {
-        return apiKeyPermissions;
-    }
+  public String getApiKeyHash() {
+    return apiKeyHash;
+  }
 
-    public void setApiKeyPermissions(String apiKeyPermissions) {
-        this.apiKeyPermissions = apiKeyPermissions;
-    }
+  public void setApiKeyHash(String apiKeyHash) {
+    this.apiKeyHash = apiKeyHash;
+  }
 
-    public Long getApiKeyCreateTS() {
-        return apiKeyCreateTS;
-    }
+  public String getApiKeyPermissions() {
+    return apiKeyPermissions;
+  }
 
-    public void setApiKeyCreateTS(Long apiKeyCreateTS) {
-        this.apiKeyCreateTS = apiKeyCreateTS;
-    }
+  public void setApiKeyPermissions(String apiKeyPermissions) {
+    this.apiKeyPermissions = apiKeyPermissions;
+  }
 
-    public Long getApiKeyExpirationTS() {
-        return apiKeyExpirationTS;
-    }
+  public Long getApiKeyCreateTS() {
+    return apiKeyCreateTS;
+  }
 
-    public void setApiKeyExpirationTS(Long apiKeyExpirationTS) {
-        this.apiKeyExpirationTS = apiKeyExpirationTS;
-    }
+  public void setApiKeyCreateTS(Long apiKeyCreateTS) {
+    this.apiKeyCreateTS = apiKeyCreateTS;
+  }
 
-    public String getApiKeyName() {
-        return apiKeyName;
-    }
+  public Long getApiKeyExpirationTS() {
+    return apiKeyExpirationTS;
+  }
 
-    public void setApiKeyName(String apiKeyName) {
-        this.apiKeyName = apiKeyName;
-    }
+  public void setApiKeyExpirationTS(Long apiKeyExpirationTS) {
+    this.apiKeyExpirationTS = apiKeyExpirationTS;
+  }
 
-    public String getApiKeyDescription() {
-        return apiKeyDescription;
-    }
+  public String getApiKeyName() {
+    return apiKeyName;
+  }
 
-    public void setApiKeyDescription(String apiKeyDescription) {
-        this.apiKeyDescription = apiKeyDescription;
-    }
+  public void setApiKeyName(String apiKeyName) {
+    this.apiKeyName = apiKeyName;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public String getApiKeyDescription() {
+    return apiKeyDescription;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setApiKeyDescription(String apiKeyDescription) {
+    this.apiKeyDescription = apiKeyDescription;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public Long getApiKeyUpdateTS() {
-        return apiKeyUpdateTS;
-    }
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
 
-    public void setApiKeyUpdateTS(Long apiKeyUpdateTS) {
-        this.apiKeyUpdateTS = apiKeyUpdateTS;
-    }
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 
-    public Boolean getActive() {
-        return isActive;
-    }
+  public Long getApiKeyUpdateTS() {
+    return apiKeyUpdateTS;
+  }
 
-    public void setActive(Boolean active) {
-        isActive = active;
-    }
+  public void setApiKeyUpdateTS(Long apiKeyUpdateTS) {
+    this.apiKeyUpdateTS = apiKeyUpdateTS;
+  }
+
+  public Boolean getActive() {
+    return isActive;
+  }
+
+  public void setActive(Boolean active) {
+    isActive = active;
+  }
 }

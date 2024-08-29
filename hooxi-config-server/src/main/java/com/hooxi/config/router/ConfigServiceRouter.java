@@ -41,10 +41,22 @@ public class ConfigServiceRouter {
                             @Content(
                                 schema = @Schema(implementation = FindDestinationsResponse.class))),
                 parameters = {
-                  @Parameter(in = ParameterIn.PATH, name = "tenantId", schema = @Schema(type = "string")),
-                  @Parameter(in = ParameterIn.QUERY, name = "domainId", schema = @Schema(type = "string")),
-                  @Parameter(in = ParameterIn.QUERY, name = "subdomainId", schema = @Schema(type = "string")),
-                  @Parameter(in = ParameterIn.QUERY, name = "eventType", schema = @Schema(type = "string"))
+                  @Parameter(
+                      in = ParameterIn.PATH,
+                      name = "tenantId",
+                      schema = @Schema(type = "string")),
+                  @Parameter(
+                      in = ParameterIn.QUERY,
+                      name = "domainId",
+                      schema = @Schema(type = "string")),
+                  @Parameter(
+                      in = ParameterIn.QUERY,
+                      name = "subdomainId",
+                      schema = @Schema(type = "string")),
+                  @Parameter(
+                      in = ParameterIn.QUERY,
+                      name = "eventType",
+                      schema = @Schema(type = "string"))
                 })),
     @RouterOperation(
         method = RequestMethod.POST,

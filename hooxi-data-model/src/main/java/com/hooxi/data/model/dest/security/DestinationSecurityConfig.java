@@ -6,6 +6,7 @@ public class DestinationSecurityConfig {
 
   @Schema(description = "TLS used for invoking webhook")
   private TLSConfig tlsConfig;
+
   @Schema(description = "information used for authenticating webhook call")
   private AuthenticationConfig authConfig;
 
@@ -27,9 +28,11 @@ public class DestinationSecurityConfig {
 
   @Override
   public String toString() {
-    return "DestinationSecurityConfig{" +
-            "tlsConfig=" + tlsConfig +
-            ", authConfig=" + authConfig +
-            '}';
+    return "DestinationSecurityConfig{"
+        + "tlsConfig="
+        + tlsConfig
+        + ", authConfig="
+        + authConfig
+        + '}';
   }
 }

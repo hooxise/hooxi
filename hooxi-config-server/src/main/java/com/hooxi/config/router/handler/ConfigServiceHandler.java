@@ -81,7 +81,9 @@ public class ConfigServiceHandler {
               responseCode = "200",
               content =
                   @Content(schema = @Schema(implementation = DestinationMappingResponse.class))),
-      parameters = {@Parameter(in = ParameterIn.PATH, name = "tenantId", schema = @Schema(type = "string"))})
+      parameters = {
+        @Parameter(in = ParameterIn.PATH, name = "tenantId", schema = @Schema(type = "string"))
+      })
   public Mono<ServerResponse> addDestinationMapping(ServerRequest serverRequest) {
     return configService
         .addDestinationMapping(
@@ -125,7 +127,9 @@ public class ConfigServiceHandler {
       requestBody =
           @RequestBody(
               content = @Content(schema = @Schema(implementation = AddDestinationRequest.class))),
-      parameters = {@Parameter(in = ParameterIn.PATH, name = "tenantId", schema = @Schema(type = "string"))})
+      parameters = {
+        @Parameter(in = ParameterIn.PATH, name = "tenantId", schema = @Schema(type = "string"))
+      })
   public Mono<ServerResponse> addDestination(ServerRequest serverRequest) {
     return configService
         .addDestination(
@@ -146,7 +150,9 @@ public class ConfigServiceHandler {
                     array =
                         @ArraySchema(schema = @Schema(implementation = DestinationResponse.class))))
       },
-      parameters = {@Parameter(in = ParameterIn.PATH, name = "tenantId", schema = @Schema(type = "string"))})
+      parameters = {
+        @Parameter(in = ParameterIn.PATH, name = "tenantId", schema = @Schema(type = "string"))
+      })
   public Mono<ServerResponse> findDestinationsForTenant(ServerRequest serverRequest) {
     return ServerResponse.ok()
         .contentType(MediaType.APPLICATION_JSON)

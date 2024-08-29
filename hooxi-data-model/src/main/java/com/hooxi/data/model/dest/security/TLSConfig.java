@@ -4,12 +4,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class TLSConfig {
 
-  @Schema(description = "CA certificate which issued the certificate to webhook URL. Mainly used for mutual authentication. But can be used in general.")
+  @Schema(
+      description =
+          "CA certificate which issued the certificate to webhook URL. Mainly used for mutual authentication. But can be used in general.")
   private String caCert;
+
   @Schema(description = "public key used while invoking webhook")
   private String publicKey;
+
   @Schema(description = "private key used while invoking webhook")
   private String privateKey;
+
   @Schema(description = "private key password if private key is encrypted")
   private String password;
 
@@ -47,11 +52,19 @@ public class TLSConfig {
 
   @Override
   public String toString() {
-    return "TLSConfig{" +
-            "ceCert='" + caCert + '\'' +
-            ", publicKey='" + publicKey + '\'' +
-            ", privateKey='" + privateKey + '\'' +
-            ", password='" + password + '\'' +
-            '}';
+    return "TLSConfig{"
+        + "ceCert='"
+        + caCert
+        + '\''
+        + ", publicKey='"
+        + publicKey
+        + '\''
+        + ", privateKey='"
+        + privateKey
+        + '\''
+        + ", password='"
+        + password
+        + '\''
+        + '}';
   }
 }

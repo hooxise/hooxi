@@ -2,7 +2,7 @@ package com.hooxi.data.model.dest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class  WebhookDestination extends Destination {
+public class WebhookDestination extends Destination {
   @Schema(description = "destination type. currently only WEBHOOK is supported")
   private DestinationType destinationType;
 

@@ -1,46 +1,46 @@
 package com.hooxi.data.model.apikey;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.util.List;
 
 public class CreateApiKeyRequest {
 
-    private String apiKeyName;
-    private String apiKeyDescription;
-    private Long expirationTimestamp;
-    @Schema(allowableValues = {"CONFIG", "CONFIG_RO", "EVENTS", "EVENT_RO"})
-    private List<String> apiKeyPermissions;
+  private String apiKeyName;
+  private String apiKeyDescription;
+  private Long expirationTimestamp;
 
-    public String getApiKeyName() {
-        return apiKeyName;
-    }
+  @Schema(allowableValues = {"CONFIG", "CONFIG_RO", "EVENTS", "EVENT_RO"})
+  private List<String> apiKeyPermissions;
 
-    public void setApiKeyName(String apiKeyName) {
-        this.apiKeyName = apiKeyName;
-    }
+  public String getApiKeyName() {
+    return apiKeyName;
+  }
 
-    public String getApiKeyDescription() {
-        return apiKeyDescription;
-    }
+  public void setApiKeyName(String apiKeyName) {
+    this.apiKeyName = apiKeyName;
+  }
 
-    public void setApiKeyDescription(String apiKeyDescription) {
-        this.apiKeyDescription = apiKeyDescription;
-    }
+  public String getApiKeyDescription() {
+    return apiKeyDescription;
+  }
 
-    public Long getExpirationTimestamp() {
-        return expirationTimestamp;
-    }
+  public void setApiKeyDescription(String apiKeyDescription) {
+    this.apiKeyDescription = apiKeyDescription;
+  }
 
-    public void setExpirationTimestamp(Long expirationTimestamp) {
-        this.expirationTimestamp = expirationTimestamp;
-    }
+  public Long getExpirationTimestamp() {
+    return expirationTimestamp;
+  }
 
-    public List<String> getApiKeyPermissions() {
-        return apiKeyPermissions;
-    }
+  public void setExpirationTimestamp(Long expirationTimestamp) {
+    this.expirationTimestamp = expirationTimestamp;
+  }
 
-    public void setApiKeyPermissions(List<String> apiKeyPermissions) {
-        this.apiKeyPermissions = apiKeyPermissions;
-    }
+  public List<String> getApiKeyPermissions() {
+    return apiKeyPermissions;
+  }
+
+  public void setApiKeyPermissions(List<String> apiKeyPermissions) {
+    this.apiKeyPermissions = apiKeyPermissions;
+  }
 }

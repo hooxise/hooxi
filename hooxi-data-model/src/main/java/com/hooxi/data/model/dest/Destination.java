@@ -3,14 +3,17 @@ package com.hooxi.data.model.dest;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hooxi.data.model.json.deserialization.DestinationDeserializer;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonDeserialize(using = DestinationDeserializer.class)
 public abstract class Destination {
-  @Schema(description = "endpoint http(s) url", format = "uri", example = "https://webhook.hooxi.com/webhook/example")
+  @Schema(
+      description = "endpoint http(s) url",
+      format = "uri",
+      example = "https://webhook.hooxi.com/webhook/example")
   private String endpoint;
+
   @Schema(description = "metadata about destination")
   private Map<String, String> metadata;
 
@@ -42,9 +45,6 @@ public abstract class Destination {
 
   @Override
   public String toString() {
-    return "Destination{" +
-            "endpoint='" + endpoint + '\'' +
-            ", metadata=" + metadata +
-            '}';
+    return "Destination{" + "endpoint='" + endpoint + '\'' + ", metadata=" + metadata + '}';
   }
 }

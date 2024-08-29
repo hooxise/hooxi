@@ -17,3 +17,7 @@ allprojects {
         }
     }
 }
+
+spotlessApply {
+    dependsOn gradle.includedBuilds*.task(':spotlessApply')
+}
