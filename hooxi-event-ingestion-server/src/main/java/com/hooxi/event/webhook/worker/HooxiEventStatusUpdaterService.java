@@ -6,7 +6,7 @@ import com.hooxi.event.ingestion.data.model.WebhookEventMapping;
 import com.hooxi.event.ingestion.data.model.WebhookLogEntity;
 import com.hooxi.event.ingestion.data.repository.HooxiEventRepository;
 import com.hooxi.event.ingestion.data.repository.WebhookEventMappingRepository;
-import com.hooxi.event.ingestion.data.repository.WebhookFailureLogRepository;
+import com.hooxi.event.ingestion.data.repository.WebhookLogRepository;
 import com.hooxi.event.webhook.worker.data.EventWithWenhookEventMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +23,15 @@ public class HooxiEventStatusUpdaterService {
   private final HooxiEventRepository hooxiEventRepository;
 
   private final WebhookEventMappingRepository webhookEventMappingRepository;
-  private final WebhookFailureLogRepository webhookFailureLogRepository;
+  private final WebhookLogRepository webhookLogRepository;
 
   public HooxiEventStatusUpdaterService(
       HooxiEventRepository hooxiEventRepository,
       WebhookEventMappingRepository webhookEventMappingRepository,
-      WebhookFailureLogRepository webhookFailureLogRepository) {
+      WebhookLogRepository webhookLogRepository) {
     this.hooxiEventRepository = hooxiEventRepository;
     this.webhookEventMappingRepository = webhookEventMappingRepository;
-    this.webhookFailureLogRepository = webhookFailureLogRepository;
+    this.webhookLogRepository = webhookLogRepository;
   }
 
   @Transactional
@@ -66,6 +66,6 @@ public class HooxiEventStatusUpdaterService {
   }
 
   public Mono<WebhookLogEntity> saveWebhookLog(WebhookLogEntity webhookLogEntity) {
-    return webhookFailureLogRepository.save(webhookLogEntity);
+    return webhookLogRepository.save(webhookLogEntity);
   }
 }

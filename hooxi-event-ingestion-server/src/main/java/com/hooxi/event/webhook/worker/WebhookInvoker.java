@@ -124,7 +124,8 @@ public class WebhookInvoker {
         .flatMap(hooxiEventStatusUpdaterService::saveWebhookLog)
         .map(
             webhookLogEntity -> {
-              if (HttpStatus.resolve(webhookLogEntity.getHttpStatus()).is2xxSuccessful()) {
+              HttpStatus respStatus = HttpStatus.resolve(webhookLogEntity.getHttpStatus());
+              if (respStatus != null && respStatus.is2xxSuccessful()) {
                 return webhookLogEntity.getResponseHeaders()
                     + "\n"
                     + webhookLogEntity.getResponsePayload();

@@ -2,10 +2,12 @@ package com.hooxi.event.ingestion.router;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 
+import com.hooxi.data.model.event.log.EventLogsResponse;
 import com.hooxi.event.ingestion.data.model.request.EventIngestionRequest;
 import com.hooxi.event.ingestion.data.model.response.EventIngestionResponse;
 import com.hooxi.event.ingestion.data.model.response.EventIngestionResponseData;
 import com.hooxi.event.ingestion.handler.HooxiEventHandler;
+import com.hooxi.event.ingestion.handler.HooxiEventLogHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -50,7 +52,7 @@ public class HooxiEventApiRouter {
                 parameters = {@Parameter(in = ParameterIn.PATH, name = "tenantId")})),
     @RouterOperation(
         method = RequestMethod.GET,
-        path = "/events/{hooxiEventId}}",
+        path = "/events/{hooxiEventId}",
         beanClass = HooxiEventHandler.class,
         beanMethod = "getEvent",
         operation =
@@ -72,6 +74,31 @@ public class HooxiEventApiRouter {
     return RouterFunctions.route()
         .POST("/events", accept(MediaType.APPLICATION_JSON), hooxiEventHandler::ingestEvent)
         .GET("/events/{hooxiEventId}", hooxiEventHandler::getEvent)
+        .build();
+  }
+
+  @Bean
+  @RouterOperations({
+    @RouterOperation(
+        method = RequestMethod.GET,
+        path = "/events/{hooxiEventId}/logs",
+        beanClass = HooxiEventLogHandler.class,
+        beanMethod = "findEventLogs",
+        operation =
+            @Operation(
+                description = "Get Event Logs for hooxi event id",
+                operationId = "GetEventLogs",
+                tags = "EventLogs",
+                responses =
+                    @ApiResponse(
+                        responseCode = "200",
+                        content =
+                            @Content(schema = @Schema(implementation = EventLogsResponse.class))),
+                parameters = {@Parameter(in = ParameterIn.PATH, name = "hooxiEventId")}))
+  })
+  public RouterFunction<ServerResponse> eventLogs(HooxiEventLogHandler eventLogService) {
+    return RouterFunctions.route()
+        .GET("/events/{hooxiEventId}/logs", eventLogService::findEventLogs)
         .build();
   }
 }
