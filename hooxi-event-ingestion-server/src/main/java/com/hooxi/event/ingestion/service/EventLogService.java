@@ -30,7 +30,7 @@ public class EventLogService {
         .flatMap(
             he ->
                 webhookLogRepository
-                    .findByInternalEventId(eventId)
+                    .findByInternalEventIdOrderByTimestamp(eventId)
                     .map(
                         webhookLogEntity ->
                             EventLogBuilder.anEventLog()
@@ -45,6 +45,7 @@ public class EventLogService {
                         lstEventLog ->
                             EventLogsResponseBuilder.anEventLogsResponse()
                                 .withEventId(eventId)
+                                .withExternalEventId(he.getExternalEventId())
                                 .withEventLogs(lstEventLog)
                                 .build()));
   }

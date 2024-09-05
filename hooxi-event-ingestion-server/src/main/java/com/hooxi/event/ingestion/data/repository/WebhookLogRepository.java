@@ -7,5 +7,5 @@ import reactor.core.publisher.Flux;
 
 @Repository
 public interface WebhookLogRepository extends ReactiveCrudRepository<WebhookLogEntity, Long> {
-  Flux<WebhookLogEntity> findByInternalEventId(String internalEventId);
+  Flux<WebhookLogEntity> findByInternalEventIdOrderByTimestamp(String internalEventId);
 }

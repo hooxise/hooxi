@@ -5,9 +5,15 @@ import com.hooxi.data.model.config.DestinationResponseBuilder;
 import com.hooxi.data.model.config.FindDestinationsResponse;
 import com.hooxi.data.model.config.FindDestinationsResponseBuilder;
 import com.hooxi.data.model.dest.WebhookDestination;
+import com.hooxi.data.model.event.HooxiEvent;
+import com.hooxi.event.ingestion.data.model.EventStatus;
+import com.hooxi.event.ingestion.data.model.HooxiEventEntity;
+import com.hooxi.event.ingestion.data.model.WebhookLogEntity;
 import com.hooxi.event.ingestion.data.model.request.EventIngestionData;
 import com.hooxi.event.ingestion.data.model.request.EventIngestionRequest;
 import com.hooxi.event.ingestion.data.model.request.EventMetadata;
+import com.hooxi.event.ingestion.data.repository.HooxiEventRepository;
+import com.hooxi.event.ingestion.data.repository.WebhookLogRepository;
 import com.hooxi.event.ingestion.service.HooxiConfigServerService;
 import com.hooxi.event.webhook.worker.EventPoller;
 import java.time.Instant;
@@ -48,6 +54,12 @@ public class HooxiEventIngestionTest {
 
   WebTestClient webTestClient;
   @Autowired private ApplicationContext context;
+
+  @Autowired
+  private WebhookLogRepository webhookLogRepository;
+
+  @Autowired
+  private HooxiEventRepository hooxiEventRepository;
 
   @Container
   static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer<>("postgres:12");
@@ -105,6 +117,67 @@ public class HooxiEventIngestionTest {
         .isEqualTo("testEventId")
         .jsonPath("$.events[0].hooxiEventId")
         .isNotEmpty();
+  }
+
+  @Test
+  public void shouldReturnEventsLog() throws Exception {
+    buildWebhookLogForTest();
+    webTestClient
+            .get()
+            .uri("/events/internal-id-1/logs")
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .consumeWith(System.out::println)
+            .jsonPath("$.eventId")
+            .isEqualTo("internal-id-1")
+            .jsonPath("$.externalEventId")
+            .isEqualTo("external-id-1")
+            .jsonPath("$.eventLogs.size()")
+            .isEqualTo(2)
+            .jsonPath("$.eventLogs[0].httpStatus")
+            .isEqualTo(500)
+            .jsonPath("$.eventLogs[1].httpStatus")
+            .isEqualTo(200)
+    ;
+  }
+
+  private void buildWebhookLogForTest() {
+    HooxiEventEntity hooxiEventEntity = new HooxiEventEntity();
+    hooxiEventEntity.setInternalEventId("internal-id-1");
+    hooxiEventEntity.setExternalEventId("external-id-1");
+    hooxiEventEntity.setEventSource("test-event-source");
+    //hooxiEventEntity.setVersion(0);
+    hooxiEventEntity.setStatus(EventStatus.SUCCESS);
+    hooxiEventEntity.setEventType("test-type");
+    hooxiEventEntity.setPayload("some-test-payload");
+    hooxiEventEntity.setSubdomainId("subdomain-1");
+    hooxiEventEntity.setDomainId("domain-1");
+    hooxiEventEntity.setTenantId("tenant-1");
+    hooxiEventEntity.setTimestamp(System.currentTimeMillis());
+    hooxiEventEntity.setHeaders(new HashMap<>());
+    hooxiEventRepository.save(hooxiEventEntity).subscribe();
+
+
+    WebhookLogEntity internalServerErrorLog = new WebhookLogEntity();
+    internalServerErrorLog.setInternalEventId("internal-id-1");
+    internalServerErrorLog.setExternalEventId("external-id-1");
+    internalServerErrorLog.setTimestamp(System.currentTimeMillis() - 10000);
+    internalServerErrorLog.setHttpStatus(500);
+    internalServerErrorLog.setResponseHeaders("test=test");
+    internalServerErrorLog.setResponsePayload("internal server error");
+
+    WebhookLogEntity successLog = new WebhookLogEntity();
+    successLog.setInternalEventId("internal-id-1");
+    successLog.setExternalEventId("external-id-1");
+    successLog.setTimestamp(System.currentTimeMillis());
+    successLog.setHttpStatus(200);
+    successLog.setResponseHeaders("test=test");
+    successLog.setResponsePayload("success");
+
+    webhookLogRepository.saveAll(List.of(internalServerErrorLog, successLog)).subscribe();
+
   }
 
   @NotNull

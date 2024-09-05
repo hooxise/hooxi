@@ -16,7 +16,7 @@ public class HooxiEventLogHandler {
   }
 
   public Mono<ServerResponse> findEventLogs(ServerRequest serverRequest) {
-    String eventId = serverRequest.pathVariable("eventId");
+    String eventId = serverRequest.pathVariable("hooxiEventId");
     return eventLogService
         .getEventLogs(eventId)
         .flatMap(de -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(de))
