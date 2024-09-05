@@ -5,7 +5,6 @@ import com.hooxi.data.model.config.DestinationResponseBuilder;
 import com.hooxi.data.model.config.FindDestinationsResponse;
 import com.hooxi.data.model.config.FindDestinationsResponseBuilder;
 import com.hooxi.data.model.dest.WebhookDestination;
-import com.hooxi.data.model.event.HooxiEvent;
 import com.hooxi.event.ingestion.data.model.EventStatus;
 import com.hooxi.event.ingestion.data.model.HooxiEventEntity;
 import com.hooxi.event.ingestion.data.model.WebhookLogEntity;
@@ -55,11 +54,9 @@ public class HooxiEventIngestionTest {
   WebTestClient webTestClient;
   @Autowired private ApplicationContext context;
 
-  @Autowired
-  private WebhookLogRepository webhookLogRepository;
+  @Autowired private WebhookLogRepository webhookLogRepository;
 
-  @Autowired
-  private HooxiEventRepository hooxiEventRepository;
+  @Autowired private HooxiEventRepository hooxiEventRepository;
 
   @Container
   static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer<>("postgres:12");
@@ -123,24 +120,23 @@ public class HooxiEventIngestionTest {
   public void shouldReturnEventsLog() throws Exception {
     buildWebhookLogForTest();
     webTestClient
-            .get()
-            .uri("/events/internal-id-1/logs")
-            .exchange()
-            .expectStatus()
-            .is2xxSuccessful()
-            .expectBody()
-            .consumeWith(System.out::println)
-            .jsonPath("$.eventId")
-            .isEqualTo("internal-id-1")
-            .jsonPath("$.externalEventId")
-            .isEqualTo("external-id-1")
-            .jsonPath("$.eventLogs.size()")
-            .isEqualTo(2)
-            .jsonPath("$.eventLogs[0].httpStatus")
-            .isEqualTo(500)
-            .jsonPath("$.eventLogs[1].httpStatus")
-            .isEqualTo(200)
-    ;
+        .get()
+        .uri("/events/internal-id-1/logs")
+        .exchange()
+        .expectStatus()
+        .is2xxSuccessful()
+        .expectBody()
+        .consumeWith(System.out::println)
+        .jsonPath("$.eventId")
+        .isEqualTo("internal-id-1")
+        .jsonPath("$.externalEventId")
+        .isEqualTo("external-id-1")
+        .jsonPath("$.eventLogs.size()")
+        .isEqualTo(2)
+        .jsonPath("$.eventLogs[0].httpStatus")
+        .isEqualTo(500)
+        .jsonPath("$.eventLogs[1].httpStatus")
+        .isEqualTo(200);
   }
 
   private void buildWebhookLogForTest() {
@@ -148,7 +144,7 @@ public class HooxiEventIngestionTest {
     hooxiEventEntity.setInternalEventId("internal-id-1");
     hooxiEventEntity.setExternalEventId("external-id-1");
     hooxiEventEntity.setEventSource("test-event-source");
-    //hooxiEventEntity.setVersion(0);
+    // hooxiEventEntity.setVersion(0);
     hooxiEventEntity.setStatus(EventStatus.SUCCESS);
     hooxiEventEntity.setEventType("test-type");
     hooxiEventEntity.setPayload("some-test-payload");
@@ -158,7 +154,6 @@ public class HooxiEventIngestionTest {
     hooxiEventEntity.setTimestamp(System.currentTimeMillis());
     hooxiEventEntity.setHeaders(new HashMap<>());
     hooxiEventRepository.save(hooxiEventEntity).subscribe();
-
 
     WebhookLogEntity internalServerErrorLog = new WebhookLogEntity();
     internalServerErrorLog.setInternalEventId("internal-id-1");
@@ -177,7 +172,6 @@ public class HooxiEventIngestionTest {
     successLog.setResponsePayload("success");
 
     webhookLogRepository.saveAll(List.of(internalServerErrorLog, successLog)).subscribe();
-
   }
 
   @NotNull
