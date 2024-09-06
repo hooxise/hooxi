@@ -3,7 +3,7 @@ create table hooxi.api_key
     api_key_id serial
         constraint hooxi_api_key_pk
             primary key,
-    apiKeyHash varchar UNIQUE,
+    api_key_hash varchar UNIQUE,
     api_key_permissions varchar,
     api_key_name varchar UNIQUE,
     description varchar,

@@ -3,6 +3,7 @@ package com.hooxi.config.router.handler;
 import com.hooxi.config.service.ApiKeyService;
 import com.hooxi.data.model.apikey.CreateApiKeyRequest;
 import com.hooxi.data.model.apikey.InactivateApiKeyRequestBuilder;
+import com.hooxi.data.model.apikey.ValidateApiKeyRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,12 @@ public class ApiKeyHandler {
                     .build()))
         .flatMap(apiKeyEntity -> ServerResponse.ok().build())
         .switchIfEmpty(ServerResponse.notFound().build());
+  }
+
+  public Mono<ServerResponse> validateApiKey(ServerRequest serverRequest) {
+    return apiKeyService
+        .validateApiKey(serverRequest.bodyToMono(ValidateApiKeyRequest.class))
+        .flatMap(httpStatus -> ServerResponse.status(httpStatus).build())
+        .switchIfEmpty(ServerResponse.status(401).build());
   }
 }

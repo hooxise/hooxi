@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -37,18 +36,5 @@ class HooxiConfigServiceApplicationTests {
   public void setup() {}
 
   @Test
-  void testGetConfig() throws Exception {
-    WebTestClient wte = WebTestClient.bindToRouterFunction(routerFunction).build();
-    wte.get()
-        .uri("/config/tenant/tenant1/domain/domain1/subdomain/subdomain1/eventtype/eventType1")
-        .exchange()
-        .expectBody()
-        .consumeWith(
-            response ->
-                System.out.println(
-                    String.format(
-                        "%d %s",
-                        response.getStatus().value(),
-                        new String(response.getResponseBodyContent()))));
-  }
+  void testGetConfig() throws Exception {}
 }

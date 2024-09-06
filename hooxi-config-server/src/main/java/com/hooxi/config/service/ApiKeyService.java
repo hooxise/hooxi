@@ -1,13 +1,8 @@
 package com.hooxi.config.service;
 
-import com.hooxi.config.exception.ApiException;
-import com.hooxi.config.exception.ErrorCodes;
 import com.hooxi.config.repository.ApiKeyRepository;
 import com.hooxi.config.repository.entity.ApiKeyEntity;
-import com.hooxi.data.model.apikey.CreateApiKeyRequest;
-import com.hooxi.data.model.apikey.CreateApiKeyResponse;
-import com.hooxi.data.model.apikey.CreateApiKeyResponseBuilder;
-import com.hooxi.data.model.apikey.InactivateApiKeyRequest;
+import com.hooxi.data.model.apikey.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -22,9 +17,11 @@ import reactor.core.publisher.Mono;
 public class ApiKeyService {
   private static final Logger LOGGER = LoggerFactory.getLogger(ApiKeyService.class);
   private final ApiKeyRepository apiKeyRepository;
+  private final MessageDigest messageDigest;
 
-  public ApiKeyService(ApiKeyRepository apiKeyRepository) {
+  public ApiKeyService(ApiKeyRepository apiKeyRepository) throws NoSuchAlgorithmException {
     this.apiKeyRepository = apiKeyRepository;
+    this.messageDigest = MessageDigest.getInstance("MD5");
   }
 
   public Mono<CreateApiKeyResponse> createApiKey(Mono<CreateApiKeyRequest> apiKeyRequestMono) {
@@ -40,16 +37,8 @@ public class ApiKeyService {
               apiKeyEntity.setActive(true);
               apiKeyEntity.setApiKeyCreateTS(System.currentTimeMillis());
 
-              MessageDigest md = null;
-              try {
-                md = MessageDigest.getInstance("MD5");
-                String apiKeyHash = new String(md.digest(generatedApiKey.getBytes()));
-                apiKeyEntity.setApiKeyHash(apiKeyHash);
-              } catch (NoSuchAlgorithmException e) {
-                LOGGER.error("failed to generate api key", e);
-                throw new ApiException(
-                    "failed to generate api key", ErrorCodes.ERR_KEY_GENERATION_000, e);
-              }
+              String apiKeyHash = new String(messageDigest.digest(generatedApiKey.getBytes()));
+              apiKeyEntity.setApiKeyHash(apiKeyHash);
               return apiKeyEntity;
             })
         .flatMap(apiKeyRepository::save)
@@ -79,5 +68,34 @@ public class ApiKeyService {
               apiKeyEntity.setApiKeyUpdateTS(System.currentTimeMillis());
               return apiKeyRepository.save(apiKeyEntity);
             });
+  }
+
+  public Mono<Integer> validateApiKey(Mono<ValidateApiKeyRequest> validateApiKeyRequestMono) {
+    return validateApiKeyRequestMono.flatMap(
+        req ->
+            apiKeyRepository
+                .findByApiKeyHash(new String(messageDigest.digest(req.getApiKey().getBytes())))
+                .map(
+                    (apiKeyEntity) -> {
+                      String permissions = apiKeyEntity.getApiKeyPermissions();
+                      String permissionToCheck = req.getOperation().trim();
+                      boolean checkRO = permissionToCheck.endsWith("RO");
+                      if (permissions != null) {
+                        String[] permissionsArr = permissions.split(",");
+                        boolean hasPermission =
+                            Arrays.stream(permissionsArr)
+                                .anyMatch(
+                                    perm ->
+                                        perm.equals(permissionToCheck)
+                                            || (checkRO && permissionToCheck.startsWith(perm)));
+                        if (hasPermission) {
+                          return 200;
+                        } else {
+                          return 403;
+                        }
+                      }
+                      return 403;
+                    })
+                .switchIfEmpty(Mono.just(401)));
   }
 }
